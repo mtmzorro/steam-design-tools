@@ -1,15 +1,32 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
+	"manifest_version": 2,
+	"name": "Steam Design Tools",
+	"version": "1.0.0",
+	"description": "Steam Design Tools",
+	"author": "mTmzorro",
+	"icons":
+	{
+		"48": "chrome-assets/img/icon.png",
+		"128": "chrome-assets/img/icon.png"
+	},
+	"browser_action": 
+	{
+		"default_icon": "chrome-assets/img/icon.png",
+		"default_popup": "index.html"
+	},
+	"content_scripts": 
+	[
+		{
+			"matches": ["https://steamcommunity.com/*"],
+			"js": ["chrome-assets/jquery.min.js", "chrome-assets/content-script.js"],
+			"run_at": "document_start"
+		}
+	],
+	"background":
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+        "scripts": ["chrome-assets/background.js"]
+	},
+	"permissions": [
+        "storage"
+    ]
 }
