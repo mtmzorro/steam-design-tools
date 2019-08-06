@@ -1,3 +1,4 @@
+/* global $ */
 /**
  * ImgUrl
  * Steam CDN图片地址处理
@@ -27,10 +28,69 @@ class ImgUrl {
 };
 
 /**
+ * chromeStorageAPI
+ * chrome.storage存储相关API拓展
+ */
+const chromeStorageAPI = {
+    /**
+     * isTableExist
+     * 判断目标表是否存在
+     * @param {string} table 
+     * @returns {boolean} 
+     */
+    isTableExist(table, callback) {
+        if (!table) { return false; }
+        chrome.storage.sync.get(table, result => {
+
+        });
+    },
+    /**
+     * isValueExist
+     * 判断当前表内包含某个value的字段项目是否存在
+     * @param {string} table 
+     * @param {string} value 
+     * @returns {boolean} 
+     */
+    isValueExist(table, value) {
+
+    },
+    /**
+     * add
+     * 向目标表内增加数据
+     * @param {string} table 
+     * @param {object} data 
+     */
+    add(table, data, callback) {
+        chrome.storage.local.get([table], result => {
+            let cache = [];
+            if (typeof result[table] !== 'undefined') {
+                cache = result[table].slice();
+            }
+            cache.push(data);
+            let storageData = {};
+            storageData[table] = cache;
+            // 把修改完缓存数据写入存储
+            chrome.storage.local.set(storageData, () => {
+                callback();
+            });
+        });
+    },
+    /**
+     * remove
+     * 删除目标表内包含某个value的字段项目
+     * @param {string} table 
+     * @param {string} value 
+     */
+    remove(table, value) {
+
+    }
+};
+
+/**
  * inventoryTools
  * Steam个人库存增强
  */
-var inventoryTools = {
+const inventoryTools = {
     init() {
         this.inventorySidebar();
     },
@@ -45,8 +105,10 @@ var inventoryTools = {
         let _this = this;
         // 监听侧边栏缩略图载入并追加按钮
         $('#iteminfo1_item_icon, #iteminfo0_item_icon').on('load', function () {
-            let inventorySidebar = $(this).parents('.inventory_iteminfo');
-            let buttonArea = inventorySidebar.find('.item_actions');
+            // 侧边栏容器
+            const inventorySidebar = $(this).parents('.inventory_iteminfo');
+            const buttonArea = inventorySidebar.find('.item_actions');
+            // 定义暂存背景图项目按钮
             let button = $(_this.contentTpl);
             button.attr('data-url', $(this).attr('src'));
 
@@ -59,21 +121,26 @@ var inventoryTools = {
         });
         // 暂存预览功能触发
         $('.btn_std').live('click', function () {
-            let inventorySidebar = $(this).parents('.inventory_iteminfo');
-            let marketSection = inventorySidebar.find('.market_item_action_buyback_at_price');
+            // 侧边栏容器
+            const inventorySidebar = $(this).parents('.inventory_iteminfo');
+            const marketSection = inventorySidebar.find('.market_item_action_buyback_at_price');
 
-            // 当前背景图素材原始尺寸URL
-            let backgroundUrl = new ImgUrl($(this).attr('data-url')).getFullSize();
-            // 当前背景图素材Steam市场URL
-            let marketUrl = marketSection.prev().prev().find('a').attr('href');
-            // 当前背景图素材Steam市场售价 string
-            let marketPrice = _this.priceExtract(marketSection.prev().html());
+            // 背景图素材所有数据
+            const backgroundData = {
+                // 背景图素材name
+                name: inventorySidebar.find('.hover_item_name').text(),
+                // 当前背景图素材原始尺寸URL
+                backgroundUrl: new ImgUrl($(this).attr('data-url')).getFullSize(),
+                // 当前背景图素材Steam市场URL
+                marketUrl: marketSection.prev().prev().find('a').attr('href'),
+                // 当前背景图素材Steam市场售价 string
+                marketPrice: _this.priceExtract(marketSection.prev().html())
+            };
 
-            let message = {
-                backgroundUrl: backgroundUrl,
-                marketUrl: marketUrl,
-                marketPrice: marketPrice
-            }
+            // 写入chrome扩展存储
+            chromeStorageAPI.add('background_data', backgroundData, () => {
+                console.log('成功插入')
+            });
 
             // // 往存储中写入数据
             // chrome.storage.sync.set({ 'item_background': message }, function () {
@@ -84,7 +151,7 @@ var inventoryTools = {
             //     console.log('Value currently is ' + result.item_background);
             // });
 
-            chrome.runtime.sendMessage(message, function (response) {
+            chrome.runtime.sendMessage('ADD_UPDATE', function (response) {
                 console.log('收到来自后台的回复：' + response);
             });
         });
@@ -97,8 +164,8 @@ var inventoryTools = {
      * @example Starting at: ¥ 0.24 <br> Volume
      */
     priceExtract(str) {
-        let strResult = str.split('<br>')[0];
-        let divSymbol = /：/.test(str) ? '：' : ':';
+        const strResult = str.split('<br>')[0];
+        const divSymbol = /：/.test(str) ? '：' : ':';
         return strResult.split(divSymbol)[1].trim();
     }
 };
