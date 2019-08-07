@@ -1,6 +1,16 @@
-// 监听来自content-script的消息
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log('收到来自content-script的消息：');
-    console.log(request, sender, sendResponse);
-    sendResponse('我是后台，我已收到你的消息：' + JSON.stringify(request));
+/**
+ * chrome.runtime.onMessage.addListener
+ * 消息监听器
+ */
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    sendResponse('success');
+    // BADGE_UPDATE 更新Badge
+    if (request.action === 'BADGE_UPDATE') {
+        clearTimeout();
+        chrome.browserAction.setBadgeText({ text: request.data });
+        chrome.browserAction.setBadgeBackgroundColor({ color: '#666666' });
+        setTimeout(() => {
+            chrome.browserAction.setBadgeText({ text: '' });
+        }, 2000);
+    }
 });

@@ -31,6 +31,7 @@ export default class BackgroundList extends Component {
                     "marketUrl": "https://steamcommunity.com/market/listings/753/991980-Cozy%20Cottage%20-%20Dead%20by%20Daylight%20Winter"
                 }
             ]
+
         };
     }
 
@@ -52,30 +53,15 @@ export default class BackgroundList extends Component {
     }
 
     componentDidMount() {
-        // 从存储中获取数据
-        chrome.storage.local.get('background_data', result => {
-            this.setState({
-                backgorundList: result['background_data']
+        // yarn start 开发环境中不含chrome API 跳过
+        if (process.env.NODE_ENV !== 'development') {
+            // 从存储中获取数据
+            chrome.storage.local.get('background_data', result => {
+                this.setState({
+                    backgorundList: result['background_data']
+                });
             });
-        });
-
-        // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        //     console.log('收到来自content-script的消息：');
-        //     console.log(request, sender, sendResponse);
-        //     sendResponse('我是后台，我已收到你的消息：' + JSON.stringify(request));
-
-        //     let cache = this.state.backgorundList;
-        //     cache.push({
-        //         name: "test",
-        //         backgroundUrl: "https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxH5rd9eDAjcFyv45SRYAFMIcKL_PArgVSL403ulRUWEndVKv0jp6KCw07dVNS7-vzKVNhhaqadDlHv93jxobflfalN73TwjwJ6ZZyjLGQ9Nn33hq-uxSgS0iu4w/",
-        //         marketPrice: "¥ 0.23",
-        //         marketUrl: "https://steamcommunity.com/market/listings/753/991980-Cozy%20Cottage%20-%20Team%20Fortress%202%20Holiday"
-        //     });
-        //     this.setState({
-        //         backgorundList: cache
-        //     });
-
-        // });
+        }
     }
     /**
      * starHandle
@@ -91,9 +77,4 @@ export default class BackgroundList extends Component {
             backgorundList: cache
         });
     }
-
-
-
-
-
 }

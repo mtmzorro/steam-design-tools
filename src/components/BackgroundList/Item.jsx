@@ -1,5 +1,5 @@
+/* global chrome */
 import React, { Component } from 'react';
-
 
 export default class Item extends Component {
     constructor(props) {
@@ -22,16 +22,34 @@ export default class Item extends Component {
                 <div className="bl-operate">
                     <span onClick={() => { this.starHandle(name) }}>暂存</span>
                     删除
-                    设为背景
+                    <span onClick={() => { this.setBackgound(backgroundUrl) }}>设为背景</span>
                 </div>
             </li>
         )
     }
     /**
      * 
-     */    
+     */
     starHandle = name => {
         this.props.onStar(name);
+    }
+    /** 
+     * setBackgound
+     * @param {string} url
+     */
+    setBackgound = url => {
+        // yarn start 开发环境中不含chrome API 跳过
+        if (process.env.NODE_ENV !== 'development') {
+            const message = {
+                action: 'SET_BACKGROUND',
+                data: url
+            }
+            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+                chrome.tabs.sendMessage(tabs[0].id, message, response => {
+                    // if(callback) callback(response);
+                });
+            });
+        }
     }
 
 }
