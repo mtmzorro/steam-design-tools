@@ -1,7 +1,7 @@
 /* global chrome */
 import React, { Component } from 'react';
 
-export default class Item extends Component {
+export default class BackgroundItem extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -17,13 +17,15 @@ export default class Item extends Component {
                         <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />
                     </a>
                 </div>
-                <div className="bl-name">{name}</div>
-                <div className="bl-price">{marketPrice}</div>
+                <div className="bl-name">
+                    <a className="bl-n-link" href={marketUrl}>{name}</a>
+                </div>
                 <div className="bl-operate">
                     <span onClick={() => { this.starHandle(name) }}>暂存</span>
-                    删除
+                    <span className="bl-drap">删除</span>
                     <span onClick={() => { this.setBackgound(backgroundUrl) }}>设为背景</span>
                 </div>
+                <div className="bl-price">{marketPrice}</div>
             </li>
         )
     }

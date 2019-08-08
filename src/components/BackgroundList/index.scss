@@ -1,15 +1,22 @@
 .backgorund-list {
-    li{
+    li {
         clear: both;
+        background: #eee;
+        overflow: hidden;
+        border-bottom: 0 none;
+        margin-bottom: 2px;
+        font-size: 12px;
+        font-family: Lato;
     }
+
     // font-size: 60px;
     .bl-img {
         float: left;
         width: 62px;
         height: 62px;
-        margin: 5px;
-        border: 1px solid #3A3A3A;
-        background-color: #333333;
+        margin: 0 5px;
+        // border: 1px solid #3A3A3A;
+        // background-color: #333333;
 
         img {
             width: 62px;
@@ -20,17 +27,41 @@
 
     .bl-name {
         float: left;
-        line-height: 64px;
-        font-size: 14px;
+
+        // line-height: 64px;
+        width: 250px;
+        height: 64px;
+        padding: 0 2px;
+        text-align: left;
+        line-height: 20px;
+
+        .bl-n-link {
+            display: table-cell;
+            vertical-align: middle;
+            height: 64px;
+            color: #5d5d5d;
+            text-decoration: none;
+        }
     }
 
     .bl-price {
-        float: left;
+        float: right;
         line-height: 64px;
+        width: 70px;
     }
 
     .bl-operate {
         float: right;
         line-height: 64px;
+        padding-right: 5px;
+
+        span {
+            cursor: pointer;
+            margin: 0 2px;
+        }
     }
+}
+
+.drap-line {
+    border-color: #949494 !important;
 }
