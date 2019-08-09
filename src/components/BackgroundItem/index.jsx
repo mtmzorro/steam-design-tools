@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import './index.scss';
 
 export default class BackgroundItem extends Component {
     constructor(props) {
@@ -9,32 +10,29 @@ export default class BackgroundItem extends Component {
         }
     }
     render() {
-        const { name, marketUrl, marketPrice, backgroundUrl } = this.props.data;
+        const { name, marketUrl, marketPrice, backgroundUrl, isLike } = this.props.data;
         return (
-            <li>
-                <div className="bl-img">
+            <li className="background-item">
+                <div className="bi-img">
                     <a href={marketUrl} target="_blank" rel="noopener noreferrer">
                         <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />
                     </a>
                 </div>
-                <div className="bl-name">
-                    <a className="bl-n-link" href={marketUrl}>{name}</a>
+                <div className="bi-name">
+                    <a className="bi-n-link" href={marketUrl}>{name}</a>
                 </div>
-                <div className="bl-operate">
-                    <span onClick={() => { this.starHandle(name) }}>暂存</span>
-                    <span className="bl-drap">删除</span>
+                <div className="bi-operate">
+                    <span onClick={() => { this.props.onLike(marketUrl) }}>
+                        {isLike ? 'stared' : 'star'}
+                    </span>
+                    <span className="bi-drap" onClick={() => { this.props.onRemove(marketUrl) }}>删除</span>
                     <span onClick={() => { this.setBackgound(backgroundUrl) }}>设为背景</span>
                 </div>
-                <div className="bl-price">{marketPrice}</div>
+                <div className="bi-price">{marketPrice}</div>
             </li>
         )
     }
-    /**
-     * 
-     */
-    starHandle = name => {
-        this.props.onStar(name);
-    }
+
     /** 
      * setBackgound
      * @param {string} url

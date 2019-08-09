@@ -149,7 +149,9 @@ const inventoryTools = {
                 // 当前背景图素材Steam市场URL
                 marketUrl: marketSection.prev().prev().find('a').attr('href'),
                 // 当前背景图素材Steam市场售价 string
-                marketPrice: _this.priceExtract(marketSection.prev().html())
+                marketPrice: _this.priceExtract(marketSection.prev().html()),
+                // 是否喜欢
+                isLike: false
             };
 
             // 写入 chrome.storage
@@ -290,7 +292,9 @@ const marketTools = {
                 // 当前背景图素材Steam市场URL
                 marketUrl: curlistItem.parents('.market_listing_row_link').attr('href'),
                 // 当前背景图素材Steam市场售价 string
-                marketPrice: curlistItem.find('.normal_price').eq(1).text()
+                marketPrice: curlistItem.find('.normal_price').eq(1).text(),
+                // 是否喜欢
+                isLike: false
             };
 
             // 写入 chrome.storage

@@ -19,6 +19,7 @@ export default class BackgroundList extends Component {
     render() {
         const _this = this;
         const backgorundList = this.state.backgorundList;
+        let backgorundListContent;
         // ReactDragListView 相关参数
         const dragProps = {
             onDragEnd(fromIndex, toIndex) {
@@ -28,10 +29,9 @@ export default class BackgroundList extends Component {
                 _this.setState({ backgorundList: cache });
             },
             nodeSelector: 'li',
-            handleSelector: 'span.bl-drap',
+            handleSelector: 'span.bi-drap',
             lineClassName: 'drap-line'
         };
-        let backgorundListContent;
 
         if (backgorundList.length === 0) {
             backgorundListContent = (
@@ -43,7 +43,10 @@ export default class BackgroundList extends Component {
                     <ul>
                         {
                             backgorundList.map((item) =>
-                                <BackgroundItem key={item.marketUrl} data={item} onStar={this.starItem} />
+                                <BackgroundItem key={item.marketUrl} data={item}
+                                    onLike={this.likeItem}
+                                    onRemove={this.removeItem}
+                                />
                             )
                         }
                     </ul>
@@ -52,7 +55,14 @@ export default class BackgroundList extends Component {
         }
 
         return (
-            <div className="backgorund-list">
+            <div className="background-list">
+                <div className="bl-title">
+                    <div className="bl-t-content">List</div>
+                    <div className="bl-t-operate">
+                        <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未 Star</span>
+                        <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空</span>
+                    </div>
+                </div>
                 {backgorundListContent}
             </div>
         )
@@ -64,9 +74,7 @@ export default class BackgroundList extends Component {
             // 从存储中获取数据
             chrome.storage.local.get('background_data', result => {
                 let resultData = result['background_data'] ? result['background_data'] : [];
-                this.setState({
-                    backgorundList: resultData
-                });
+                this.setState({ backgorundList: resultData });
             });
         } else {
             // 开发环境使用 mock 数据
@@ -77,24 +85,58 @@ export default class BackgroundList extends Component {
             //     .catch(function (error) {
             //         console.log(error);
             //     });
-            this.setState({
-                backgorundList: mockData
-            });
+            this.setState({ backgorundList: mockData });
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        console.log(this.state)
+    }
+
     /**
-     * starHandle
-     * 暂存当前项目
+     * likeItem
+     * like 当前项目
+     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
      */
-    starItem = name => {
-        let index = _.findIndex(this.state.backgorundList, ['name', name]);
+    likeItem = data => {
+        // 通过 marketUrl 做唯一区分找到该条数据
+        const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
         let cache = this.state.backgorundList.slice();
-        let itemCache = cache[index];
+
+        cache[index].isLike = cache[index].isLike ? false : true;
+        this.setState({ backgorundList: cache });
+    }
+
+    /**
+     * removeItem
+     * 删除列表中指定的项目
+     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
+     */
+    removeItem = data => {
+        const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
+        let cache = this.state.backgorundList.slice();
+
         cache.splice(index, 1);
-        cache.unshift(itemCache);
-        this.setState({
-            backgorundList: cache
-        });
+        this.setState({ backgorundList: cache });
+    }
+
+    /**
+     * clearUnLikeItem
+     * 删除列表中未 like 的项目
+     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
+     */
+    clearUnLikeItem = data => {
+        let cache = this.state.backgorundList.slice();
+
+        cache = cache.filter(item => item.isLike);
+        this.setState({ backgorundList: cache });
+    }
+
+    /**
+     * clearAll
+     * 删除列表中全部数据
+     */
+    clearAllItem = () => {
+        this.setState({ backgorundList: [] });
     }
 }

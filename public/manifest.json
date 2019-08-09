@@ -19,8 +19,8 @@
 				"https://steamcommunity.com/*"
 			],
 			"js": [
-				"chrome-assets/jquery.min.js",
-				"chrome-assets/content-script.js"
+				"chrome-assets/jquery.js",
+				"chrome-assets/contentScript.js"
 			],
 			"run_at": "document_start"
 		}
