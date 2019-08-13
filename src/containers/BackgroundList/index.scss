@@ -1,3 +1,31 @@
+.background-list {
+    .bl-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .bl-t-content {
+            padding-left: 5px;
+            height: 26px;
+            line-height: 26px;
+        }
+
+        .bl-t-operate {
+            height: 26px;
+            line-height: 26px;
+
+            .button {
+                margin-right: 5px;
+                cursor: pointer;
+
+                &:hover {
+                    color: aquamarine;
+                }
+            }
+        }
+    }
+}
+
 .background-item {
     clear: both;
     background: #eee;
@@ -58,4 +86,8 @@
             margin: 0 2px;
         }
     }
+}
+
+.drap-line {
+    border-color: #949494 !important;
 }

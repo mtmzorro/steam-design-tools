@@ -1,8 +1,8 @@
 /* global chrome */
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import _ from 'lodash';
 import ReactDragListView from 'react-drag-listview';
-import BackgroundItem from '../BackgroundItem';
+import Item from './Item';
 // import axios from 'axios';
 import './index.scss';
 import mockData from '../../mock/backgroundData.json';
@@ -43,7 +43,7 @@ export default class BackgroundList extends Component {
                     <ul>
                         {
                             backgorundList.map((item) =>
-                                <BackgroundItem key={item.marketUrl} data={item}
+                                <Item key={item.marketUrl} data={item}
                                     onLike={this.likeItem}
                                     onRemove={this.removeItem}
                                 />

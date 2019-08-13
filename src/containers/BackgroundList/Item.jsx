@@ -1,6 +1,5 @@
 /* global chrome */
 import React, { Component } from 'react';
-import './index.scss';
 
 export default class BackgroundItem extends Component {
     constructor(props) {
