@@ -1,0 +1,22 @@
+.footer {
+    height: 68px;
+    font-size: 12px;
+    padding: 0 16px;
+
+    .footer-content {
+        padding-top: 16px;
+        line-height: 20px;
+
+        a {
+            text-decoration: none;
+        }
+
+        .github {
+            margin-right: 10px;
+
+            .iconfont {
+                margin-right: 2px;
+            }
+        }
+    }
+}

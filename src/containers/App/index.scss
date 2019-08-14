@@ -1,0 +1,70 @@
+body {
+  font-size: 12px;
+  background: #f7f8fa;
+}
+
+.App {
+  width: 500px;
+  color: #57585a;
+
+  a {
+    color: #57585a;
+
+    &:hover {
+      color: #24292e;
+    }
+  }
+}
+
+// button
+.button {
+  display: inline-block;
+  padding: 0 12px;
+  height: 32px;
+  line-height: 32px;
+  background-color: #fff;
+  box-shadow: 0px 3px 3px 0px rgba($color: #000000, $alpha: 0.05);
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+  color: #57585a;
+
+  &:hover {
+    color: #24292e;
+    box-shadow: 0px 3px 3px 0px rgba($color: #000000, $alpha: 0.1);
+  }
+}
+
+// scrollbar for chrome
+::-webkit-scrollbar {
+  width: 3px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, .0);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .0);
+
+  &:hover {
+    background-color: rgba(0, 0, 0, .0);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, .25);
+  }
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, .3);
+
+  // -webkit-box-shadow: inset 1px 1px 0 rgba(0, 0, 0, .1);
+  &:hover {
+    background-color: rgba(0, 0, 0, .6);
+  }
+
+  &:active {
+    background-color: rgba(0, 0, 0, .8);
+  }
+}

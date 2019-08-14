@@ -29,7 +29,7 @@ export default class BackgroundList extends Component {
                 _this.setState({ backgorundList: cache });
             },
             nodeSelector: 'li',
-            handleSelector: 'span.bi-drap',
+            handleSelector: '.bi-drag',
             lineClassName: 'drap-line'
         };
 
@@ -56,14 +56,13 @@ export default class BackgroundList extends Component {
 
         return (
             <div className="background-list">
-                <div className="bl-title">
-                    <div className="bl-t-content">List</div>
-                    <div className="bl-t-operate">
-                        <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未 Star</span>
-                        <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空</span>
-                    </div>
+                <div className="bl-wrap">
+                    {backgorundListContent}
                 </div>
-                {backgorundListContent}
+                <div className="bl-operate">
+                    <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
+                    <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
+                </div>
             </div>
         )
     }

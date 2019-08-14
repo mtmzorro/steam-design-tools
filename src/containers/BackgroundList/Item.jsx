@@ -12,6 +12,7 @@ export default class BackgroundItem extends Component {
         const { name, marketUrl, marketPrice, backgroundUrl, isLike } = this.props.data;
         return (
             <li className="background-item">
+                <div className="bi-drag">三</div>
                 <div className="bi-img">
                     <a href={marketUrl} target="_blank" rel="noopener noreferrer">
                         <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />
@@ -19,15 +20,19 @@ export default class BackgroundItem extends Component {
                 </div>
                 <div className="bi-name">
                     <a className="bi-n-link" href={marketUrl}>{name}</a>
+                    <span className="bi-n-price">{marketPrice}</span>
                 </div>
                 <div className="bi-operate">
-                    <span onClick={() => { this.props.onLike(marketUrl) }}>
-                        {isLike ? 'stared' : 'star'}
+                    <span className="bi-o-button" onClick={() => { this.props.onLike(marketUrl) }}>
+                        <span className={isLike ? 'iconfont icon-star stared' : 'iconfont icon-star'}></span>
                     </span>
-                    <span className="bi-drap" onClick={() => { this.props.onRemove(marketUrl) }}>删除</span>
-                    <span onClick={() => { this.setBackgound(backgroundUrl) }}>设为背景</span>
+                    <span className="bi-o-button" onClick={() => { this.props.onRemove(marketUrl) }}>
+                        <span className="iconfont icon-remove"></span>
+                    </span>
+                    <span className="bi-o-button" onClick={() => { this.setBackgound(backgroundUrl) }}>
+                        <span className="iconfont icon-brush"></span>设为背景
+                    </span>
                 </div>
-                <div className="bi-price">{marketPrice}</div>
             </li>
         )
     }
