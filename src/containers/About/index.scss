@@ -1,0 +1,47 @@
+.about {
+    position: relative;
+    z-index: 10;
+    padding: 0 16px 6px 16px;
+
+    .about-wrap {
+        height: 420px - 6px;
+        background-color: #fff;
+        box-shadow: 0px 3px 3px 0px rgba($color: #000000, $alpha: 0.05);
+    }
+
+    .about-content {
+        padding: 20px 30px 0 30px;
+        color: #24292e;
+
+        p {
+            font-size: 12px;
+            text-indent: 2em;
+            line-height: 20px;
+            margin-bottom: 10px;
+
+            &.center {
+                text-align: center;
+            }
+        }
+
+        .payment-img {
+            width: auto;
+            height: 212px;
+            border: 1px solid #e7e7e7;
+            border-radius: 5px;
+        }
+    }
+
+    .about-operate {
+        text-align: right;
+        width: 50%;
+        position: absolute;
+        z-index: 10;
+        bottom: -42px;
+        right: 15px;
+
+        .button-clearUnLike {
+            margin-right: 15px;
+        }
+    }
+}

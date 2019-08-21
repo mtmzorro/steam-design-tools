@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route, Link } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import BackgroundList from '../BackgroundList';
 import Header from '../../components/Header';
 import About from '../About';

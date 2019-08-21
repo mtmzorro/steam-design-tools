@@ -12,7 +12,7 @@ export default class BackgroundItem extends Component {
         const { name, marketUrl, marketPrice, backgroundUrl, isLike } = this.props.data;
         return (
             <li className="background-item">
-                <div className="bi-drag">三</div>
+                <div className="bi-drag"><span className="iconfont icon-drag-vertical"></span></div>
                 <div className="bi-img">
                     <a href={marketUrl} target="_blank" rel="noopener noreferrer">
                         <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />

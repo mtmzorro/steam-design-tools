@@ -1,6 +1,6 @@
 .header {
     position: relative;
-    height: 78px;
+    height: 74px;
 
     h1 {
         position: relative;
@@ -10,7 +10,24 @@
         color: #fff;
         line-height: 30px;
         text-align: center;
-        padding-top: 20px;
+        padding-top: 22px;
+        overflow: hidden;
+
+        .logo {
+            width: 26px;
+            height: 26px;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: top;
+        }
+
+        .logo-text {
+            display: inline-block;
+            width: 228px;
+            height: 23px;
+            margin-top: 4px;
+            vertical-align: top;
+        }
     }
 
     .header-bg {

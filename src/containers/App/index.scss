@@ -1,18 +1,20 @@
 body {
   font-size: 12px;
   background: #f7f8fa;
+
 }
 
 .App {
   width: 500px;
   color: #57585a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', "Microsoft YaHei", sans-serif;
+}
 
-  a {
-    color: #57585a;
+a {
+  color: #57585a;
 
-    &:hover {
-      color: #24292e;
-    }
+  &:hover {
+    color: #24292e;
   }
 }
 
@@ -28,6 +30,8 @@ body {
   text-align: center;
   cursor: pointer;
   color: #57585a;
+  text-decoration: none;
+  min-width: 60px;
 
   &:hover {
     color: #24292e;
