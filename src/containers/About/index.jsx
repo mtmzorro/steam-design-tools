@@ -21,6 +21,7 @@ export default class About extends Component {
                     </div>
                 </div>
                 <div className="about-operate">
+                    <Link to="/index.html" className="button button-help">帮  助</Link>
                     <Link to="/index.html" className="button button-return">返  回</Link>
                 </div>
             </div>

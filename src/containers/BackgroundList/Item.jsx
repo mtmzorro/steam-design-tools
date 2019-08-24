@@ -14,12 +14,12 @@ export default class BackgroundItem extends Component {
             <li className="background-item">
                 <div className="bi-drag"><span className="iconfont icon-drag-vertical"></span></div>
                 <div className="bi-img">
-                    <a href={marketUrl} target="_blank" rel="noopener noreferrer">
+                    <a title={name} href={marketUrl} target="_blank" rel="noopener noreferrer">
                         <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />
                     </a>
                 </div>
                 <div className="bi-name">
-                    <a className="bi-n-link" href={marketUrl}>{name}</a>
+                    <a className="bi-n-link" title={name} href={marketUrl} target="_blank" rel="noopener noreferrer">{name}</a>
                     <span className="bi-n-price">{marketPrice}</span>
                 </div>
                 <div className="bi-operate">

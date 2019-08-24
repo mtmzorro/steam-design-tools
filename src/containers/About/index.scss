@@ -12,6 +12,7 @@
     .about-content {
         padding: 20px 30px 0 30px;
         color: #24292e;
+        user-select: text;
 
         p {
             font-size: 12px;
@@ -40,7 +41,7 @@
         bottom: -42px;
         right: 15px;
 
-        .button-clearUnLike {
+        .button-help {
             margin-right: 15px;
         }
     }

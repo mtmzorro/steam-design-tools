@@ -1,9 +1,8 @@
 /* global chrome */
 import React, { Component } from 'react';
-import _ from 'lodash';
 import ReactDragListView from 'react-drag-listview';
+import _ from 'lodash';
 import Item from './Item';
-// import axios from 'axios';
 import './index.scss';
 import mockData from '../../mock/backgroundData.json';
 
@@ -20,22 +19,32 @@ export default class BackgroundList extends Component {
         const _this = this;
         const backgorundList = this.state.backgorundList;
         let backgorundListContent;
+        let operateContent;
         // ReactDragListView 相关参数
         const dragProps = {
             onDragEnd(fromIndex, toIndex) {
-                const cache = backgorundList.slice();
-                const item = cache.splice(fromIndex, 1)[0];
-                cache.splice(toIndex, 0, item);
-                _this.setState({ backgorundList: cache });
+                _this.dragItem(fromIndex, toIndex);
             },
             nodeSelector: 'li',
             handleSelector: '.bi-drag',
             lineClassName: 'drap-line'
         };
 
+        // backgorundList 页空数据冷启动处理
         if (backgorundList.length === 0) {
             backgorundListContent = (
-                <span className="bl-info">暂无数据</span>
+                <div className="empty-info">
+                    <div className="ei-icon"><span className="iconfont icon-steam"></span></div>
+                    <div className="ei-title">在浏览器 Steam 页面中选择需预览的背景图</div>
+                    <div className="ei-content">
+                        请您用当前浏览器打开 Steam，然后在「Steam 市场」搜索结果列表中点击价格左侧的<strong>「+」</strong>按钮，或者在「物品库存」页背景图详情右侧点击<strong>「在 Steam Design Tools 中预览」</strong>将背景图片缓存至工具中。
+                    </div>
+                </div>
+            );
+            operateContent = (
+                <div className="bl-operate">
+                    <a className="button button-help" href="https://github.com/mtmzorro/steam-design-tools" target="_blank" rel="noopener noreferrer">帮 助</a>
+                </div>
             );
         } else {
             backgorundListContent = (
@@ -52,6 +61,12 @@ export default class BackgroundList extends Component {
                     </ul>
                 </ReactDragListView>
             );
+            operateContent = (
+                <div className="bl-operate">
+                    <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
+                    <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
+                </div>
+            );
         }
 
         return (
@@ -59,17 +74,14 @@ export default class BackgroundList extends Component {
                 <div className="bl-wrap">
                     {backgorundListContent}
                 </div>
-                <div className="bl-operate">
-                    <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
-                    <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
-                </div>
+                {operateContent}
             </div>
         )
     }
 
     componentDidMount() {
         // yarn start 开发环境中不含chrome API 跳过
-        if (process.env.NODE_ENV !== 'development') {
+        if (process.env.NODE_ENV === 'production') {
             // 从存储中获取数据
             chrome.storage.local.get('background_data', result => {
                 let resultData = result['background_data'] ? result['background_data'] : [];
@@ -77,19 +89,21 @@ export default class BackgroundList extends Component {
             });
         } else {
             // 开发环境使用 mock 数据
-            // axios.get(mockData)
-            //     .then(function (response) {
-            //         console.log(response);
-            //     })
-            //     .catch(function (error) {
-            //         console.log(error);
-            //     });
             this.setState({ backgorundList: mockData });
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        console.log(this.state)
+    /**
+     * updateChromeStorage
+     * 将当前 state 更新至 chrome storage
+     */
+    updateChromeStorage = (data) => {
+        if (process.env.NODE_ENV === 'production') {
+            const cache = { 'background_data': data };
+            chrome.storage.local.set(cache, (value) => {
+                console.log('Storage saved: ', value);
+            });
+        }
     }
 
     /**
@@ -104,6 +118,7 @@ export default class BackgroundList extends Component {
 
         cache[index].isLike = cache[index].isLike ? false : true;
         this.setState({ backgorundList: cache });
+        this.updateChromeStorage(cache);
     }
 
     /**
@@ -117,18 +132,33 @@ export default class BackgroundList extends Component {
 
         cache.splice(index, 1);
         this.setState({ backgorundList: cache });
+        this.updateChromeStorage(cache);
+    }
+
+    /**
+     * dragItem
+     * 拖拽重新排序项目
+     * @param {number} fromIndex 原始索引
+     * @param {number} toIndex 目标索引
+     */
+    dragItem = (fromIndex, toIndex) => {
+        const cache = this.state.backgorundList.slice();
+        const item = cache.splice(fromIndex, 1)[0];
+        cache.splice(toIndex, 0, item);
+        this.setState({ backgorundList: cache });
+        this.updateChromeStorage(cache);
     }
 
     /**
      * clearUnLikeItem
      * 删除列表中未 like 的项目
-     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
      */
-    clearUnLikeItem = data => {
+    clearUnLikeItem = () => {
         let cache = this.state.backgorundList.slice();
 
         cache = cache.filter(item => item.isLike);
         this.setState({ backgorundList: cache });
+        this.updateChromeStorage(cache);
     }
 
     /**
@@ -137,5 +167,6 @@ export default class BackgroundList extends Component {
      */
     clearAllItem = () => {
         this.setState({ backgorundList: [] });
+        this.updateChromeStorage([]);
     }
 }

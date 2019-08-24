@@ -11,6 +11,7 @@ const App = () => {
         <div className="App">
             <Header />
             <Switch>
+                {/* Chrome 扩展中默认路径为 /index.html */}
                 <Route path="/index.html" exact component={BackgroundList} />
                 <Route path="/about" component={About} />
             </Switch>
