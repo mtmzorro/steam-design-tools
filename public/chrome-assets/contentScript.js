@@ -1,11 +1,44 @@
 /* global $ */
+
 /**
- * ImgUrl
+ * GLOBAL_CONFIG
+ * Chrome 注入页面内相关全局配置
+ */
+const GLOBAL_CONFIG = {
+    // Chrome local storage table name
+    TABLE_NAME: 'background_data',
+    // Data structure
+    // @returns {object} 
+    GET_TABLE_STRUCTURE() {
+        return {
+            // 背景图素材name
+            name: new String(),
+            // 当前背景图素材原始尺寸URL
+            backgroundUrl: new String(),
+            // 当前背景图素材Steam市场URL
+            marketUrl: new String(),
+            // 当前背景图素材Steam市场售价 string
+            marketPrice: new String(),
+            // 是否喜欢
+            isLike: false
+        }
+    },
+    // Chrome 扩展中与 background.js&弹出主页 相关 Message Action 类型
+    ACTION_TYPE: {
+        // 传递至 background.js: Chrome 右上角扩展 ICON 数量更新
+        BADGE_UPDATE: 'BADGE_UPDATE',
+        // 传递自 插件弹出主页: 将用户所选择背景图应用至当前 Steam 个人资料页
+        SET_BACKGROUND: 'SET_BACKGROUND'
+    }
+};
+
+/**
+ * SteamImgUrl
  * Steam CDN 图片地址处理
  * @param {string} url
  * @example https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxH5rd9eDAjcFyv45SRYAFMIcKL_PArgVSL403ulRUWEndVKv0jp6KCw07IVMPs7n9LwU0h6HNcjlBtYvlkteKk_SgNbmIxT8J7JUp2OiYrd-gixq-uxR6VrmHMw/330x192
  */
-class ImgUrl {
+class SteamImgUrl {
     constructor(url) {
         this.url = url;
         this.defaultUrl = '';
@@ -28,39 +61,18 @@ class ImgUrl {
 };
 
 /**
- * chromeStorageAPI
- * chrome.storage 存储相关 API 拓展
+ * chromeHandle
+ * chrome API 相关方法
  */
-const chromeStorageAPI = {
+const chromeHandle = {
     /**
-     * isTableExist
-     * 判断目标表是否存在
-     * @param {string} table 
-     * @returns {boolean} 
-     */
-    isTableExist(table, callback) {
-        if (!table) { return false; }
-        chrome.storage.sync.get(table, result => {
-
-        });
-    },
-    /**
-     * isValueExist
-     * 判断当前表内包含某个 value 的字段项目是否存在
-     * @param {string} table 
-     * @param {string} value 
-     * @returns {boolean} 
-     */
-    isValueExist(table, value) {
-
-    },
-    /**
-     * add
-     * 向目标表内增加数据
-     * @param {string} table 
+     * storageAdd
+     * 向 Chrome storage 目标表内增加数据
+     * @param {string} table_name
      * @param {object} data 
+     * @param {function} callback 回调相关函数
      */
-    add(table, data, callback) {
+    storageAdd(table, data, callback) {
         chrome.storage.local.get([table], result => {
             // 现有数据缓存 
             let cache = [];
@@ -82,18 +94,24 @@ const chromeStorageAPI = {
             storageData[table] = cache;
             // 把修改完缓存数据写入存储
             chrome.storage.local.set(storageData, () => {
+                // 执行回调函数 并把存储数据作为参数返回
                 callback(storageData[table]);
             });
         });
     },
     /**
-     * remove
-     * 删除目标表内包含某个value的字段项目
-     * @param {string} table 
-     * @param {string} value 
+     * sendBadgeMsg
+     * 向 background.js 发送 Chrome 右上角扩展 ICON 数量更新消息
+     * @param {number} num Badge 显示数量
      */
-    remove(table, value) {
-
+    sendBadgeMsg(num) {
+        // 设置 badge 图标当前存储数量
+        const message = {
+            action: GLOBAL_CONFIG.ACTION_TYPE.BADGE_UPDATE,
+            data: num.toString()
+        }
+        // 发送消息给 background.js
+        chrome.runtime.sendMessage(message, response => { });
     }
 };
 
@@ -141,29 +159,20 @@ const inventoryTools = {
             const marketSection = inventorySidebar.find('.market_item_action_buyback_at_price');
 
             // 背景图素材所有数据
-            const backgroundData = {
-                // 背景图素材name
+            let backgroundData = GLOBAL_CONFIG.GET_TABLE_STRUCTURE();
+            backgroundData = {
                 name: inventorySidebar.find('.hover_item_name').text(),
-                // 当前背景图素材原始尺寸URL
-                backgroundUrl: new ImgUrl($(this).attr('data-url')).getFullSize(),
-                // 当前背景图素材Steam市场URL
+                backgroundUrl: new SteamImgUrl($(this).attr('data-url')).getFullSize(),
                 marketUrl: marketSection.prev().prev().find('a').attr('href'),
-                // 当前背景图素材Steam市场售价 string
                 marketPrice: _this.priceExtract(marketSection.prev().html()),
-                // 是否喜欢
                 isLike: false
             };
 
             // 写入 chrome.storage
-            chromeStorageAPI.add('background_data', backgroundData, (data) => {
+            chromeHandle.storageAdd(GLOBAL_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
                     // 设置 badge 图标当前存储数量
-                    const message = {
-                        action: 'BADGE_UPDATE',
-                        data: data.length.toString()
-                    }
-                    // 发送消息给 background.js
-                    chrome.runtime.sendMessage(message, response => { });
+                    chromeHandle.sendBadgeMsg(data.length);
                 }
             });
         });
@@ -172,10 +181,14 @@ const inventoryTools = {
      * priceExtract
      * 从价格 HTML 中解析出价格
      * @param {string} str 
-     * @example 開始価格： ¥ 0.23 <br> xadasd
+     * @example 開始価格: ¥ 0.23 <br> xadasd
      * @example Starting at: ¥ 0.24 <br> Volume
+     * @example 正在加载中异常: //steamcommunity-a.akamaihd.net/public/images/login/throbber.gif" alt="处理中...">
      */
     priceExtract(str) {
+        // 解析到加载中异常返回 ??.00
+        if (!/login\/throbber.gif/.test(str)) return '??.00';
+
         const strResult = str.split('<br>')[0];
         const divSymbol = /：/.test(str) ? '：' : ':';
         return strResult.split(divSymbol)[1].trim();
@@ -198,7 +211,7 @@ const profileTools = {
         // 设置个人资料页消息监听器
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // 设置替换背景图
-            if (request.action === 'SET_BACKGROUND' && request.data) {
+            if (request.action === GLOBAL_CONFIG.ACTION_TYPE.SET_BACKGROUND && request.data) {
                 this.setBackground(request.data);
             }
         });
@@ -284,29 +297,20 @@ const marketTools = {
             if (backgroundUrlEle.length === 0) return;
 
             // 背景图素材所有数据
-            const backgroundData = {
-                // 背景图素材name
+            let backgroundData = GLOBAL_CONFIG.GET_TABLE_STRUCTURE();
+            backgroundData = {
                 name: curlistItem.find('.market_listing_item_name').text(),
-                // 当前背景图素材原始尺寸URL
-                backgroundUrl: new ImgUrl(backgroundUrlEle.attr('src')).getFullSize(),
-                // 当前背景图素材Steam市场URL
+                backgroundUrl: new SteamImgUrl(backgroundUrlEle.attr('src')).getFullSize(),
                 marketUrl: curlistItem.parents('.market_listing_row_link').attr('href'),
-                // 当前背景图素材Steam市场售价 string
                 marketPrice: curlistItem.find('.normal_price').eq(1).text(),
-                // 是否喜欢
                 isLike: false
             };
 
             // 写入 chrome.storage
-            chromeStorageAPI.add('background_data', backgroundData, (data) => {
+            chromeHandle.storageAdd(GLOBAL_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
                     // 设置 badge 图标当前存储数量
-                    const message = {
-                        action: 'BADGE_UPDATE',
-                        data: data.length.toString()
-                    }
-                    // 发送消息给 background.js
-                    chrome.runtime.sendMessage(message, response => { });
+                    chromeHandle.sendBadgeMsg(data.length);
                 }
             });
         }).live('mouseenter', function () {
