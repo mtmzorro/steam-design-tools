@@ -83,11 +83,8 @@ export default class BackgroundList extends Component {
         // ENV development 无法运行 Chrome API
         if (process.env.NODE_ENV === 'production') {
             // ENV production get data from Chrome storage
-            console.log('APP_CONFIG:', APP_CONFIG.TABLE_NAME)
-            chrome.storage.local.get(APP_CONFIG.TABLE_NAME, result => {
-                console.log('result:', result)
+            chrome.storage.local.get([APP_CONFIG.TABLE_NAME], result => {
                 let resultData = result[APP_CONFIG.TABLE_NAME] ? result[APP_CONFIG.TABLE_NAME] : [];
-                console.log('resultData:', result)
                 this.setState({ backgorundList: resultData });
             });
         } else {
@@ -105,8 +102,8 @@ export default class BackgroundList extends Component {
         if (process.env.NODE_ENV === 'production') {
             let cache = {};
             cache[APP_CONFIG.TABLE_NAME] = data;
-            chrome.storage.local.set(cache, (value) => {
-                console.log('Storage saved: ', value);
+            chrome.storage.local.set(cache, () => {
+                console.log('Storage saved');
             });
         }
     }

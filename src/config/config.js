@@ -35,6 +35,6 @@ const APP_CONFIG = {
 };
 
 // 需要同时兼容在 Chrome 插件中已全局变量方式存在
-if (typeof exports !== 'undefined') {
-    exports.default = APP_CONFIG;
+if (typeof module !== 'undefined') {
+    module.exports = APP_CONFIG;
 }
