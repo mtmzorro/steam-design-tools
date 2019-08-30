@@ -19,15 +19,16 @@
 				"https://steamcommunity.com/*"
 			],
 			"js": [
-				"chrome-assets/jquery.js",
-				"chrome-assets/contentScript.js"
+				"chrome-assets/lib/jquery.js",
+				"chrome-assets/content-scripts/config.js",
+				"chrome-assets/content-scripts/index.js"
 			],
 			"run_at": "document_start"
 		}
 	],
 	"background": {
 		"scripts": [
-			"chrome-assets/background.js"
+			"chrome-assets/content-scripts/background.js"
 		]
 	},
 	"permissions": [

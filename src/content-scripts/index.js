@@ -1,36 +1,5 @@
-/* global $ */
-
-/**
- * GLOBAL_CONFIG
- * Chrome 注入页面内相关全局配置
- */
-const GLOBAL_CONFIG = {
-    // Chrome local storage table name
-    TABLE_NAME: 'background_data',
-    // Data structure
-    // @returns {object} 
-    GET_TABLE_STRUCTURE() {
-        return {
-            // 背景图素材name
-            name: new String(),
-            // 当前背景图素材原始尺寸URL
-            backgroundUrl: new String(),
-            // 当前背景图素材Steam市场URL
-            marketUrl: new String(),
-            // 当前背景图素材Steam市场售价 string
-            marketPrice: new String(),
-            // 是否喜欢
-            isLike: false
-        }
-    },
-    // Chrome 扩展中与 background.js&弹出主页 相关 Message Action 类型
-    ACTION_TYPE: {
-        // 传递至 background.js: Chrome 右上角扩展 ICON 数量更新
-        BADGE_UPDATE: 'BADGE_UPDATE',
-        // 传递自 插件弹出主页: 将用户所选择背景图应用至当前 Steam 个人资料页
-        SET_BACKGROUND: 'SET_BACKGROUND'
-    }
-};
+/* global $ APP_CONFIG*/
+// APP_CONFIG import from src/config/config
 
 /**
  * SteamImgUrl
@@ -70,7 +39,7 @@ const chromeHandle = {
      * 向 Chrome storage 目标表内增加数据
      * @param {string} table_name
      * @param {object} data 
-     * @param {function} callback 回调相关函数
+     * @param {function} callback callback function 回调函数
      */
     storageAdd(table, data, callback) {
         chrome.storage.local.get([table], result => {
@@ -101,13 +70,14 @@ const chromeHandle = {
     },
     /**
      * sendBadgeMsg
+     * Send message to background.js to update Badge on Chrome
      * 向 background.js 发送 Chrome 右上角扩展 ICON 数量更新消息
      * @param {number} num Badge 显示数量
      */
     sendBadgeMsg(num) {
         // 设置 badge 图标当前存储数量
         const message = {
-            action: GLOBAL_CONFIG.ACTION_TYPE.BADGE_UPDATE,
+            action: APP_CONFIG.actionType.BADGE_UPDATE,
             data: num.toString()
         }
         // 发送消息给 background.js
@@ -159,7 +129,7 @@ const inventoryTools = {
             const marketSection = inventorySidebar.find('.market_item_action_buyback_at_price');
 
             // 背景图素材所有数据
-            let backgroundData = GLOBAL_CONFIG.GET_TABLE_STRUCTURE();
+            let backgroundData = APP_CONFIG.getTableStructure();
             backgroundData = {
                 name: inventorySidebar.find('.hover_item_name').text(),
                 backgroundUrl: new SteamImgUrl($(this).attr('data-url')).getFullSize(),
@@ -169,7 +139,7 @@ const inventoryTools = {
             };
 
             // 写入 chrome.storage
-            chromeHandle.storageAdd(GLOBAL_CONFIG.TABLE_NAME, backgroundData, (data) => {
+            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
                     // 设置 badge 图标当前存储数量
                     chromeHandle.sendBadgeMsg(data.length);
@@ -211,7 +181,7 @@ const profileTools = {
         // 设置个人资料页消息监听器
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // 设置替换背景图
-            if (request.action === GLOBAL_CONFIG.ACTION_TYPE.SET_BACKGROUND && request.data) {
+            if (request.action === APP_CONFIG.actionType.SET_BACKGROUND && request.data) {
                 this.setBackground(request.data);
             }
         });
@@ -297,7 +267,7 @@ const marketTools = {
             if (backgroundUrlEle.length === 0) return;
 
             // 背景图素材所有数据
-            let backgroundData = GLOBAL_CONFIG.GET_TABLE_STRUCTURE();
+            let backgroundData = APP_CONFIG.getTableStructure();
             backgroundData = {
                 name: curlistItem.find('.market_listing_item_name').text(),
                 backgroundUrl: new SteamImgUrl(backgroundUrlEle.attr('src')).getFullSize(),
@@ -306,8 +276,8 @@ const marketTools = {
                 isLike: false
             };
 
-            // 写入 chrome.storage
-            chromeHandle.storageAdd(GLOBAL_CONFIG.TABLE_NAME, backgroundData, (data) => {
+            // Save data into chrome storage
+            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
                     // 设置 badge 图标当前存储数量
                     chromeHandle.sendBadgeMsg(data.length);

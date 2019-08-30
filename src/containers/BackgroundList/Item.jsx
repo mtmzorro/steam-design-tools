@@ -1,5 +1,6 @@
 /* global chrome */
 import React, { Component } from 'react';
+import APP_CONFIG from '../../config/config';
 
 export default class BackgroundItem extends Component {
     constructor(props) {
@@ -39,13 +40,16 @@ export default class BackgroundItem extends Component {
 
     /** 
      * setBackgound
+     * Change Steam profile page's background image
+     * 应用当前背景图至 Steam 个人资料页
      * @param {string} url
      */
     setBackgound = url => {
-        // yarn start 开发环境中不含chrome API 跳过
-        if (process.env.NODE_ENV !== 'development') {
+        // ENV production use Chrome API
+        if (process.env.NODE_ENV === 'production') {
+            // Send message to content-script/index.js
             const message = {
-                action: 'SET_BACKGROUND',
+                action: APP_CONFIG.actionType.SET_BACKGROUND,
                 data: url
             }
             chrome.tabs.query({ active: true, currentWindow: true }, tabs => {

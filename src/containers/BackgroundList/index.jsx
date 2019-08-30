@@ -1,11 +1,11 @@
 /* global chrome */
 import React, { Component } from 'react';
 import ReactDragListView from 'react-drag-listview';
+import APP_CONFIG from '../../config/config';
 import _ from 'lodash';
 import Item from './Item';
 import './index.scss';
 import mockData from '../../mock/backgroundData.json';
-
 
 export default class BackgroundList extends Component {
     constructor(props) {
@@ -20,7 +20,7 @@ export default class BackgroundList extends Component {
         const backgorundList = this.state.backgorundList;
         let backgorundListContent;
         let operateContent;
-        // ReactDragListView 相关参数
+        // ReactDragListView
         const dragProps = {
             onDragEnd(fromIndex, toIndex) {
                 _this.dragItem(fromIndex, toIndex);
@@ -30,7 +30,7 @@ export default class BackgroundList extends Component {
             lineClassName: 'drap-line'
         };
 
-        // backgorundList 页空数据冷启动处理
+        // backgorundList Empty Page 冷启动
         if (backgorundList.length === 0) {
             backgorundListContent = (
                 <div className="empty-info">
@@ -80,26 +80,31 @@ export default class BackgroundList extends Component {
     }
 
     componentDidMount() {
-        // yarn start 开发环境中不含chrome API 跳过
+        // ENV development 无法运行 Chrome API
         if (process.env.NODE_ENV === 'production') {
-            // 从存储中获取数据
-            chrome.storage.local.get('background_data', result => {
-                let resultData = result['background_data'] ? result['background_data'] : [];
+            // ENV production get data from Chrome storage
+            console.log('APP_CONFIG:', APP_CONFIG.TABLE_NAME)
+            chrome.storage.local.get(APP_CONFIG.TABLE_NAME, result => {
+                console.log('result:', result)
+                let resultData = result[APP_CONFIG.TABLE_NAME] ? result[APP_CONFIG.TABLE_NAME] : [];
+                console.log('resultData:', result)
                 this.setState({ backgorundList: resultData });
             });
         } else {
-            // 开发环境使用 mock 数据
+            // ENV development use mock data
             this.setState({ backgorundList: mockData });
         }
     }
 
     /**
      * updateChromeStorage
-     * 将当前 state 更新至 chrome storage
+     * Save data into Chrome storage
+     * 向 Chrome storage 存储数据
      */
     updateChromeStorage = (data) => {
         if (process.env.NODE_ENV === 'production') {
-            const cache = { 'background_data': data };
+            let cache = {};
+            cache[APP_CONFIG.TABLE_NAME] = data;
             chrome.storage.local.set(cache, (value) => {
                 console.log('Storage saved: ', value);
             });
@@ -108,11 +113,12 @@ export default class BackgroundList extends Component {
 
     /**
      * likeItem
-     * like 当前项目
-     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
+     * Like Background item
+     * 将喜欢的项目标星
+     * @param {string} data unique value in Background item, name is not unique, use marketUrl instead. name 不唯一
      */
     likeItem = data => {
-        // 通过 marketUrl 做唯一区分找到该条数据
+        // Use marketUrl find Background item data
         const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
         let cache = this.state.backgorundList.slice();
 
@@ -123,8 +129,9 @@ export default class BackgroundList extends Component {
 
     /**
      * removeItem
-     * 删除列表中指定的项目
-     * @param {string} data 区分数据项唯一依据，name 会重复故使用 marketUrl
+     * Remove Background item
+     * 删除 Background item
+     * @param {string} data unique value in Background item, name is not unique, use marketUrl instead. name 不唯一
      */
     removeItem = data => {
         const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
@@ -137,9 +144,10 @@ export default class BackgroundList extends Component {
 
     /**
      * dragItem
-     * 拖拽重新排序项目
-     * @param {number} fromIndex 原始索引
-     * @param {number} toIndex 目标索引
+     * Drap to sort Background item
+     * 拖拽排序 Background item
+     * @param {number} fromIndex original index
+     * @param {number} toIndex target index
      */
     dragItem = (fromIndex, toIndex) => {
         const cache = this.state.backgorundList.slice();
@@ -151,7 +159,8 @@ export default class BackgroundList extends Component {
 
     /**
      * clearUnLikeItem
-     * 删除列表中未 like 的项目
+     * Remove unlike item in list
+     * 删除未标星项目
      */
     clearUnLikeItem = () => {
         let cache = this.state.backgorundList.slice();
@@ -163,7 +172,7 @@ export default class BackgroundList extends Component {
 
     /**
      * clearAll
-     * 删除列表中全部数据
+     * Remove all item 删除全部
      */
     clearAllItem = () => {
         this.setState({ backgorundList: [] });

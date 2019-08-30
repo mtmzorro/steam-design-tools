@@ -11,8 +11,9 @@ const App = () => {
         <div className="App">
             <Header />
             <Switch>
-                {/* Chrome 扩展中默认路径为 /index.html */}
-                <Route path="/index.html" exact component={BackgroundList} />
+                <Route path="/" exact component={BackgroundList} />
+                {/* Chrome extension default url is /index.html */}
+                <Route path="/index.html" component={BackgroundList} />
                 <Route path="/about" component={About} />
             </Switch>
             <Footer />

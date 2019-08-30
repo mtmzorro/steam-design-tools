@@ -1,10 +1,10 @@
 /**
  * chrome.runtime.onMessage.addListener
- * 消息监听器
+ * Background Message Listener
  */
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse('success');
-    // BADGE_UPDATE 更新Badge
+    // BADGE_UPDATE Update Badge
     if (request.action === 'BADGE_UPDATE') {
         clearTimeout();
         chrome.browserAction.setBadgeText({ text: request.data });
