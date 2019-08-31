@@ -189,7 +189,7 @@ const profileTools = {
      * Set background img 设置个人资料背景
      * @param {string} backgroundUrl 
      */
-    setBackground(backgroundUrl) {
+    setProfileBackground(backgroundUrl) {
         // 资料页容器
         const profilePage = $('.profile_page').eq(1);
         profilePage.css('background-image', 'url(' + backgroundUrl + ')')
@@ -203,21 +203,30 @@ const profileTools = {
     setShowcasePreview() {
         const showcaseButton = $(`<a class="sdt-showcase-change" href="javascript:;">
                                     <span class="profile_customization_edit_icon"></span>
-                                    <input class="sdt-img-cache" title="预览新图片" type="file" accept="image/*"/>
+                                    <input class="sdt-img-cache" title="New image" type="file" accept="image/*"/>
                                 </a>`);
-        const buttonStyle = `position: absolute; top: 4px; left: 4px; z-index: 1; display: block; overflow: hidden; height: 16px; padding: 8px 8px; background: #5491cf; border-radius: 3px; box-shadow: 2px 2px 2px rgba(0,0,0,0.5);`;
+        const buttonStyle = `display: none; position: absolute; top: 4px; left: 4px; z-index: 1; overflow: hidden; height: 16px; padding: 8px 8px; background: #5491cf; border-radius: 3px; box-shadow: 2px 2px 2px rgba(0,0,0,0.5);`;
         const inputStyle = `position: absolute; left: 0; top: 0; z-index: 10; opacity: 0; color: transparent; width: 100%; height: 100%; cursor: pointer; background:transparent; font-size: 20px;`;
         showcaseButton.attr('style', buttonStyle)
             .find('.sdt-img-cache').attr('style', inputStyle);
 
-        // showcase slot mouseenter event
+        // Append showcaseButton
+        $('.screenshot_showcase .showcase_slot').append(showcaseButton);
+
+        // Showcase slot mouseenter event
         $('.screenshot_showcase .showcase_slot').live('mouseenter', function () {
-            $(this).append(showcaseButton);
+            const thisButton = $(this).find('.sdt-showcase-change');
+            const showcaseImg = $(this).find('.screenshot_showcase_screenshot').find('img');
+            const showcaseImgSize = showcaseImg.width() + 'px * ' + showcaseImg.height() + 'px';
+            // Add current showcase size
+            $(this).find('.sdt-img-cache').attr('title', '当前尺寸：' + showcaseImgSize + ' 点击预览新图片');
+            thisButton.show();
         }).live('mouseleave', function () {
-            $(this).find('.sdt-showcase-change').remove();
+            const thisButton = $(this).find('.sdt-showcase-change');
+            thisButton.hide();
         });
 
-        // upload and change showcase img 上传预览图片
+        // Upload and change showcase img 上传预览图片
         $('.sdt-img-cache').live('change', function (event) {
             const showcaseImg = $(this).parents('.showcase_slot').find('.screenshot_showcase_screenshot').find('img');
             const file = $(this)[0].files[0];
