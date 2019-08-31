@@ -28,7 +28,7 @@ const APP_CONFIG = {
         // send to background.js: Update Badge count.  
         // Chrome 右上角扩展 ICON 数量更新
         BADGE_UPDATE: 'BADGE_UPDATE',
-        // send from content-script/index.js: Change Steam profile page's background image
+        // send to content-script/index.js: Change Steam profile page's background image
         // 将用户所选择背景图应用至当前 Steam 个人资料页
         SET_BACKGROUND: 'SET_BACKGROUND'
     }

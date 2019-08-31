@@ -94,7 +94,7 @@ const inventoryTools = {
         // 非 Steam 个人库存增强不处理
         // @example https://steamcommunity.com/id/userid/inventory/
         if (!/\/inventory/.test(window.location.href)) return;
-        // 初始化 inventorySidebar 增强
+        // Init inventorySidebar
         this.inventorySidebar();
     },
     /**
@@ -170,25 +170,23 @@ const inventoryTools = {
  * Steam 个人资料页预览增强
  */
 const profileTools = {
-    /**
-     * init
-     * 初始化
-     */
     init() {
         // 非个人资料页不处理
         // @example https://steamcommunity.com/id/userid
         if (!/\/id/.test(window.location.href) || $('.profile_page').length === 0) return;
-        // 设置个人资料页消息监听器
+        // Set message listener wait message from chrome extension 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-            // 设置替换背景图
+            // Set profile background
             if (request.action === APP_CONFIG.actionType.SET_BACKGROUND && request.data) {
-                this.setBackground(request.data);
+                this.setProfileBackground(request.data);
             }
         });
+        // Init showcase preview
+        this.setShowcasePreview();
     },
     /**
-     * setBackground
-     * 设置替换背景图
+     * setProfileBackground
+     * Set background img 设置个人资料背景
      * @param {string} backgroundUrl 
      */
     setBackground(backgroundUrl) {
@@ -196,6 +194,40 @@ const profileTools = {
         const profilePage = $('.profile_page').eq(1);
         profilePage.css('background-image', 'url(' + backgroundUrl + ')')
             .find('.profile_background_image_content').css('background-image', 'url(' + backgroundUrl + ')');
+    },
+
+    /**
+     * setShowcasePreview
+     * Steam showcase img preview 展柜图片预览
+     */
+    setShowcasePreview() {
+        const showcaseButton = $(`<a class="sdt-showcase-change" href="javascript:;">
+                                    <span class="profile_customization_edit_icon"></span>
+                                    <input class="sdt-img-cache" title="预览新图片" type="file" accept="image/*"/>
+                                </a>`);
+        const buttonStyle = `position: absolute; top: 4px; left: 4px; z-index: 1; display: block; overflow: hidden; height: 16px; padding: 8px 8px; background: #5491cf; border-radius: 3px; box-shadow: 2px 2px 2px rgba(0,0,0,0.5);`;
+        const inputStyle = `position: absolute; left: 0; top: 0; z-index: 10; opacity: 0; color: transparent; width: 100%; height: 100%; cursor: pointer; background:transparent; font-size: 20px;`;
+        showcaseButton.attr('style', buttonStyle)
+            .find('.sdt-img-cache').attr('style', inputStyle);
+
+        // showcase slot mouseenter event
+        $('.screenshot_showcase .showcase_slot').live('mouseenter', function () {
+            $(this).append(showcaseButton);
+        }).live('mouseleave', function () {
+            $(this).find('.sdt-showcase-change').remove();
+        });
+
+        // upload and change showcase img 上传预览图片
+        $('.sdt-img-cache').live('change', function (event) {
+            const showcaseImg = $(this).parents('.showcase_slot').find('.screenshot_showcase_screenshot').find('img');
+            const file = $(this)[0].files[0];
+            // Use FileReader get Base64 url
+            let reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                showcaseImg.attr('src', e.target.result);
+            }
+        });
     }
 };
 
@@ -204,10 +236,6 @@ const profileTools = {
  * Steam 市场预览增强
  */
 const marketTools = {
-    /**
-     * init
-     * 初始化
-     */
     init() {
         // 非 Steam 市场不处理
         // @example https://steamcommunity.com/market/search?q=XXX
@@ -223,22 +251,7 @@ const marketTools = {
         const listItem = $('.market_listing_row')
         // addButton 相关
         const addButton = $('<span class="sdt-add-button" title="使用 Steam Design tools 预览">+</span>');
-        const buttonStyle = `
-            position: absolute;
-            right: 158px;
-            top: 25px;
-            display: inline-block;
-            height: 24px;
-            width: 26px;
-            line-height: 24px;
-            text-align: center;
-            background-color: #68932f;
-            border-radius: 2px;
-            -moz-border-radius: 2px;
-            color: #d2ff96;
-            font-size: 20px;
-            z-index: 10;
-        `;
+        const buttonStyle = `position: absolute; right: 158px; top: 25px; z-index: 10; display: inline-block; height: 24px; width: 26px; line-height: 24px; text-align: center; background-color: #68932f; border-radius: 2px; color: #d2ff96; font-size: 20px;`;
         addButton.attr('style', buttonStyle);
 
         // TODO: 国际化时增加繁体中文、日文等判断
