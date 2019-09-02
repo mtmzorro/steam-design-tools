@@ -1,6 +1,8 @@
 # Steam Design Tools
 > 一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具
 
+<img src="doc/assets/img/app.png" width="825" height="630" alt="app" />
+
 ## 功能
 
 * 存储 Steam 市场中的背景图物品。
