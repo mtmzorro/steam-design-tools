@@ -19,12 +19,11 @@
 ![Feature-2](/doc/assets/img/feature-2.gif)
 
 **展柜（艺术品、截图）替换本地图片实时预览，按钮提示当前图片尺寸**
-
 ![Feature-3](/doc/assets/img/feature-3.gif)
 
 ## 开发
 
-```
+```bash
 git clone https://github.com/mtmzorro/steam-design-tools.git
 
 cd steam-design-tools
