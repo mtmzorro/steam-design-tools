@@ -1,0 +1,80 @@
+.sdt-notifications {
+    position: fixed;
+    right: 20px;
+    top: 40px;
+    z-index: 1001;
+    display: none;
+    min-width: 180px;
+    padding: 5px 12px 8px 12px;
+    border-radius: 2px;
+    min-height: 30px;
+    background: linear-gradient(to bottom, rgba(227, 234, 239, 1) 0%, rgba(199, 213, 224, 1) 100%);
+    font-size: 12px;
+    overflow: hidden;
+    box-shadow: 0 0 12px #000000;
+}
+
+.sdt-notifications h4 {
+    color: #222d3d;
+    font-weight: bold;
+    font-size: 14px;
+    font-family: "Motiva Sans", Sans-serif;
+    font-weight: normal;
+    line-height: 20px;
+    margin-bottom: 2px;
+}
+
+.sdt-notifications .sn-content {
+    color: #3b546d;
+    font-size: 12px;
+    line-height: 16px;
+    word-break: break-word;
+}
+
+.sdt-showcase-change {
+    display: none;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 1;
+    overflow: hidden;
+    height: 16px;
+    padding: 8px 8px;
+    background: #5491cf;
+    border-radius: 3px;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+}
+
+.sdt-showcase-change .sdt-img-cache {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    opacity: 0;
+    color: transparent;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    background: transparent;
+    font-size: 20px;
+}
+
+.sdt-add-button {
+    position: absolute;
+    right: 158px;
+    top: 25px;
+    z-index: 10;
+    display: inline-block;
+    height: 24px;
+    width: 26px;
+    line-height: 24px;
+    text-align: center;
+    background-color: #68932f;
+    border-radius: 2px;
+    color: #d2ff96;
+    font-size: 20px;
+}
+
+.sdt-add-button:hover {
+    background-color: #8ac33e;
+}

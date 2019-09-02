@@ -18,6 +18,9 @@
 			"matches": [
 				"https://steamcommunity.com/*"
 			],
+			"css": [
+				"chrome-assets/content-scripts/sdt.css"
+			],
 			"js": [
 				"chrome-assets/lib/jquery.js",
 				"chrome-assets/content-scripts/config.js",

@@ -31,7 +31,7 @@ export default class BackgroundItem extends Component {
                         <span className="iconfont icon-remove"></span>
                     </span>
                     <span className="bi-o-button" onClick={() => { this.setBackgound(backgroundUrl) }}>
-                        <span className="iconfont icon-brush"></span>设为背景
+                        <span className="iconfont icon-brush"></span><em>设为背景</em>
                     </span>
                 </div>
             </li>

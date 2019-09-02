@@ -3,7 +3,7 @@
 
 /**
  * SteamImgUrl
- * Steam CDN 图片地址处理
+ * Steam CDN Img resize
  * @param {string} url
  * @example https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxH5rd9eDAjcFyv45SRYAFMIcKL_PArgVSL403ulRUWEndVKv0jp6KCw07IVMPs7n9LwU0h6HNcjlBtYvlkteKk_SgNbmIxT8J7JUp2OiYrd-gixq-uxR6VrmHMw/330x192
  */
@@ -26,6 +26,50 @@ class SteamImgUrl {
     }
     get62size() {
         return this.defaultUrl + '62fx62f';
+    }
+};
+
+/**
+ * SteamNotifications
+ * InventoryTools and marketTools notifications
+ * 个人库存和市场相关提示信息
+ * @param {string} content notification content
+ */
+class SteamNotifications {
+    constructor(content) {
+        this.content = content;
+        this.className = '.sdt-notifications';
+
+        this.renderHTML();
+        this.showNotifications();
+        this.autoHideNotifications();
+    }
+    /**
+     * renderHTML
+     */
+    renderHTML() {
+        // Render once
+        if ($(this.className).length === 0) {
+            const html = $(`<div class="sdt-notifications" data-timer="0">
+                                <h4>Steam Design Tools</h4>
+                                <div class="sn-content"></div>
+                            </div>`);
+            $(html).appendTo('body');
+        }
+        $(this.className).find('.sn-content').text(this.content);
+    }
+    showNotifications() {
+        $(this.className).fadeIn(200);
+    }
+    hideNotifications() {
+        $(this.className).fadeOut(200);
+    }
+    autoHideNotifications() {
+        clearTimeout(parseInt($(this.className).attr('data-timer'), 10));
+        let timer = setTimeout(() => {
+            this.hideNotifications();
+        }, 3000);
+        $(this.className).attr('data-timer', timer);
     }
 };
 
@@ -141,8 +185,10 @@ const inventoryTools = {
             // 写入 chrome.storage
             chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
-                    // 设置 badge 图标当前存储数量
+                    // Set Badge
                     chromeHandle.sendBadgeMsg(data.length);
+                    // Notifications result
+                    new SteamNotifications(backgroundData.name + ' 成功添加');
                 }
             });
         });
@@ -157,7 +203,7 @@ const inventoryTools = {
      */
     priceExtract(str) {
         // 解析到加载中异常返回 ??.00
-        if (!/login\/throbber.gif/.test(str)) return '??.00';
+        if (/login\/throbber.gif/.test(str)) return '??.00';
 
         const strResult = str.split('<br>')[0];
         const divSymbol = /：/.test(str) ? '：' : ':';
@@ -205,10 +251,6 @@ const profileTools = {
                                     <span class="profile_customization_edit_icon"></span>
                                     <input class="sdt-img-cache" title="New image" type="file" accept="image/*"/>
                                 </a>`);
-        const buttonStyle = `display: none; position: absolute; top: 4px; left: 4px; z-index: 1; overflow: hidden; height: 16px; padding: 8px 8px; background: #5491cf; border-radius: 3px; box-shadow: 2px 2px 2px rgba(0,0,0,0.5);`;
-        const inputStyle = `position: absolute; left: 0; top: 0; z-index: 10; opacity: 0; color: transparent; width: 100%; height: 100%; cursor: pointer; background:transparent; font-size: 20px;`;
-        showcaseButton.attr('style', buttonStyle)
-            .find('.sdt-img-cache').attr('style', inputStyle);
 
         // Append showcaseButton
         $('.screenshot_showcase .showcase_slot').append(showcaseButton);
@@ -260,8 +302,6 @@ const marketTools = {
         const listItem = $('.market_listing_row')
         // addButton 相关
         const addButton = $('<span class="sdt-add-button" title="使用 Steam Design tools 预览">+</span>');
-        const buttonStyle = `position: absolute; right: 158px; top: 25px; z-index: 10; display: inline-block; height: 24px; width: 26px; line-height: 24px; text-align: center; background-color: #68932f; border-radius: 2px; color: #d2ff96; font-size: 20px;`;
-        addButton.attr('style', buttonStyle);
 
         // TODO: 国际化时增加繁体中文、日文等判断
         // 是否为 background 类型 Steam 物品字符串
@@ -301,14 +341,12 @@ const marketTools = {
             // Save data into chrome storage
             chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
                 if (typeof data !== 'undefined' && data.length > 0) {
-                    // 设置 badge 图标当前存储数量
+                    // Set Badge
                     chromeHandle.sendBadgeMsg(data.length);
+                    // Notifications result
+                    new SteamNotifications(backgroundData.name + ' 成功添加');
                 }
             });
-        }).live('mouseenter', function () {
-            $(this).css({ 'background-color': '#8ac33e' });
-        }).live('mouseleave', function () {
-            $(this).css({ 'background-color': '#68932f' });
         });
     }
 };
