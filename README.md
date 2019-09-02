@@ -1,5 +1,6 @@
 # Steam Design Tools
-> 一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具
+> 一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具<br/>
+> *「市场里面花钱买个背景图竟然不能预览，只能看图想象，不能忍」*
 
 <img src="doc/assets/img/app.png" width="825" height="630" alt="app" />
 
