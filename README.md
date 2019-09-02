@@ -3,6 +3,12 @@
 
 <img src="doc/assets/img/app.png" width="825" height="630" alt="app" />
 
+## 下载安装
+
+* [Chrome 网上应用店](#) 正在上架中
+* [Releases](https://github.com/mtmzorro/steam-design-tools/releases) `.crx` 文件下载，然后在 Chrome 中打开 chrome://extensions/ 将 `.crx` 文件托进去即可安装
+
+
 ## 功能
 
 * 存储 Steam 市场中的背景图物品。
@@ -21,6 +27,7 @@
 ![Feature-2](/doc/assets/img/feature-2.gif)
 
 **展柜（艺术品、截图）替换本地图片实时预览，按钮提示当前图片尺寸**
+
 ![Feature-3](/doc/assets/img/feature-3.gif)
 
 ## 开发
