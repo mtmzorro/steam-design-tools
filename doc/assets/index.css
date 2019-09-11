@@ -1,13 +1,21 @@
 .header {
     position: relative;
-    height: 530px;
+
+}
+
+.header-bg {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 33.125rem;
     background-image: -moz-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
     background-image: -webkit-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
     background-image: -ms-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
 }
 
 .header .header-wrap {
-    width: 1200px;
+    position: relative;
+    max-width: 75rem;
     margin: 0 auto;
 }
 
@@ -21,6 +29,23 @@
     text-align: center;
     line-height: 1.9rem;
     margin: 0 0.875rem;
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+    .header .header-wrap {
+        max-width: none;
+        padding: 0 4rem;
+    }
+}
+
+@media screen and (max-width: 42em) {
+    .header-bg {
+        height: 26rem;
+    }
+
+    .header .header-wrap {
+        padding: 0 1rem;
+    }
 }
 
 .top-bar {
@@ -60,6 +85,38 @@
     line-height: 1;
 }
 
+@media screen and (min-width: 42em) and (max-width: 64em) {
+    .top-bar {
+        height: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .top-bar .tb-left {
+        padding: 1.25rem 0 0 0.5rem;
+    }
+
+    .top-bar .tb-right {
+        padding: 1.25rem 0.5rem 0 0;
+        font-size: 0;
+    }
+}
+
+@media screen and (max-width: 42em) {
+    .top-bar {
+        height: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .top-bar .tb-left {
+        padding: 1rem 0 0 0.5rem;
+    }
+
+    .top-bar .tb-right {
+        padding: 1rem 0.5rem 0 0;
+        font-size: 0;
+    }
+}
+
 .app-title {
     margin: 0;
     font-size: 0;
@@ -67,7 +124,7 @@
 }
 
 .app-title img {
-    width: 48.25rem;
+    width: 24.0625rem;
     height: auto;
     margin-bottom: 0.75rem;
 }
@@ -80,6 +137,22 @@
     margin-bottom: 3.125rem;
 }
 
+@media screen and (min-width: 42em) and (max-width: 64em) {
+    .app-title img {
+        width: 24.0625rem;
+    }
+}
+
+@media screen and (max-width: 42em) {
+    .app-title img {
+        width: 18rem;
+    }
+
+    .app-description {
+        font-size: 0.875rem;
+    }
+}
+
 .app-download {
     text-align: center;
     margin-bottom: 3.75rem;
@@ -89,8 +162,73 @@
     text-align: center;
 }
 
-
 .app-img img {
-    width: 51.5625rem;
+    max-width: 51.5625rem;
     height: auto;
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+    .app-img img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+@media screen and (max-width: 42em) {
+    .app-img img {
+        max-width: 100%;
+        height: auto;
+    }
+}
+
+.main-content {
+    font-size: 1rem;
+}
+
+.floor {
+    overflow: hidden;
+}
+
+.floor h2 {
+    text-align: center;
+    color: #4d4d7a;
+    font-size: 1.875rem;
+    margin-bottom: 1.5rem;
+}
+
+.floor h2 span {
+    display: inline-block;
+    border-bottom: 3px solid #4d4d7a;
+}
+
+.floor-features {
+    padding: 0 4rem;
+}
+
+@media screen and (min-width: 42em) and (max-width: 64em) {
+    .main-content {
+        font-size: 1rem;
+    }
+
+    .floor h2 {
+        font-size: 1.7rem;
+    }
+
+    .floor-features {
+        padding: 0 4rem;
+    }
+}
+
+@media screen and (max-width: 42em) {
+    .main-content {
+        font-size: 0.875rem;
+    }
+
+    .floor h2 {
+        font-size: 1.5rem;
+    }
+
+    .floor-features {
+        padding: 0;
+    }
 }
