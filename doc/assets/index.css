@@ -1,0 +1,96 @@
+.header {
+    position: relative;
+    height: 530px;
+    background-image: -moz-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
+    background-image: -webkit-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
+    background-image: -ms-linear-gradient(-24deg, rgb(77, 77, 122) 21%, rgb(160, 158, 216) 100%);
+}
+
+.header .header-wrap {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.header-button {
+    display: inline-block;
+    width: 8.125rem;
+    height: 2.125rem;
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 0.875rem;
+    text-align: center;
+    line-height: 1.9rem;
+    margin: 0 0.875rem;
+}
+
+.top-bar {
+    height: 3.75rem;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 3.75rem;
+}
+
+.top-bar .tb-left {
+    padding: 1.25rem 0 0 2.5rem;
+}
+
+.top-bar .tb-left iframe {
+    width: 10rem;
+    height: 1.25rem;
+}
+
+.top-bar .tb-right {
+    padding: 1.25rem 2.5rem 0 0;
+    font-size: 0;
+}
+
+.top-bar .tb-right a {
+    display: inline-block;
+    margin-left: 1rem;
+    width: 1.375rem;
+    height: 1.375rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.top-bar .tb-right .iconfont {
+    vertical-align: top;
+    font-size: 1.375rem;
+    color: #fff;
+    line-height: 1;
+}
+
+.app-title {
+    margin: 0;
+    font-size: 0;
+    text-align: center;
+}
+
+.app-title img {
+    width: 48.25rem;
+    height: auto;
+    margin-bottom: 0.75rem;
+}
+
+.app-description {
+    text-align: center;
+    color: #fff;
+    margin: 0;
+    font-size: 1.125rem;
+    margin-bottom: 3.125rem;
+}
+
+.app-download {
+    text-align: center;
+    margin-bottom: 3.75rem;
+}
+
+.app-img {
+    text-align: center;
+}
+
+
+.app-img img {
+    width: 51.5625rem;
+    height: auto;
+}
