@@ -197,20 +197,28 @@ body {
 }
 
 .app-img img {
-    max-width: 51.5625rem;
-    height: auto;
+    width: 51.5625rem;
+    height: 39.375rem;
 }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
+    .app-img {
+        min-height: 25rem;
+    }
+
     .app-img img {
-        max-width: 100%;
+        width: 100%;
         height: auto;
     }
 }
 
 @media screen and (max-width: 42em) {
+    .app-img {
+        min-height: 15rem;
+    }
+
     .app-img img {
-        max-width: 100%;
+        width: 100%;
         height: auto;
     }
 }
