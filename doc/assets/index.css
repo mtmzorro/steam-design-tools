@@ -1,3 +1,7 @@
+body {
+    color: #595959;
+}
+
 .header {
     position: relative;
 
@@ -29,12 +33,28 @@
     text-align: center;
     line-height: 1.9rem;
     margin: 0 0.875rem;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.header-button:hover {
+    background-color: rgba(225, 225, 225, 0.2);
+    text-decoration: none;
 }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
     .header .header-wrap {
         max-width: none;
         padding: 0 4rem;
+    }
+
+    .header-button:hover {
+        background-color: transparent;
+        text-decoration: none;
+    }
+
+    .header-button:active {
+        background-color: rgba(225, 225, 225, 0.2);
+        text-decoration: none;
     }
 }
 
@@ -45,6 +65,20 @@
 
     .header .header-wrap {
         padding: 0 1rem;
+    }
+
+    .header-button {
+        margin: 0 0.4rem;
+    }
+
+    .header-button:hover {
+        background-color: transparent;
+        text-decoration: none;
+    }
+
+    .header-button:active {
+        background-color: rgba(225, 225, 225, 0.2);
+        text-decoration: none;
     }
 }
 
@@ -187,6 +221,7 @@
 
 .floor {
     overflow: hidden;
+    margin-bottom: 3rem;
 }
 
 .floor h2 {
@@ -201,8 +236,45 @@
     border-bottom: 3px solid #4d4d7a;
 }
 
+.floor h3 {
+    text-align: center;
+    color: #595959;
+}
+
 .floor-features {
     padding: 0 4rem;
+}
+
+.floor-preview {
+    text-align: center;
+}
+
+.floor-preview h3 {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.floor-preview h3:last-child {
+    margin-bottom: 1rem;
+}
+
+.floor-preview .fp-video {
+    width: 90%;
+}
+
+.floor-Donate .fd-img {
+    text-align: center;
+}
+
+.floor-Donate .fd-img img {
+    width: 30%;
+    height: auto;
+}
+
+.floor-Donate p {
+    text-align: center;
+    margin: 0;
 }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
@@ -230,5 +302,33 @@
 
     .floor-features {
         padding: 0;
+    }
+
+    .floor-preview h3 {
+        font-size: 0.75rem;
+        padding: 0 1rem;
+    }
+
+    .floor-Donate {
+        margin-bottom: 0;
+    }
+
+    .floor-Donate p {
+        font-size: 0.75rem;
+    }
+}
+
+.footer {
+    text-align: center;
+    padding-bottom: 4rem;
+    font-size: 0.875rem;
+    line-height: 1.5rem;
+}
+
+@media screen and (max-width: 42em) {
+    .footer {
+        font-size: 0.75rem;
+        padding: 0 1rem 2rem 1rem;
+        line-height: 1rem;
     }
 }
