@@ -28,7 +28,8 @@
 			],
 			"run_at": "document_start"
 		}
-	],
+    ],
+    "content_security_policy": "script-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://google-analytics.com; object-src 'self'",
 	"background": {
 		"scripts": [
 			"chrome-assets/content-scripts/background.js"
