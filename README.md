@@ -2,7 +2,7 @@
 > 一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具<br/>
 > *「市场里面花钱买个背景图竟然不能预览，只能看图想象，不能忍」*
 
-<img src="docs/assets/img/app.png" width="825"  alt="app" />
+<img src="https://cdn.jsdelivr.net/gh/mtmzorro/steam-design-tools@1.0.1/docs/assets/img/app.png" width="825"  alt="app" />
 
 ## 下载安装
 
@@ -21,15 +21,15 @@
 
 **存储 Steam 市场中的背景图物品，并在个人资料页预览**
 
-![Feature-1](/docs/assets/img/feature-1.gif)
+![Feature-1](https://cdn.jsdelivr.net/gh/mtmzorro/steam-design-tools@1.0.1/docs/assets/img/feature-1.gif)
 
 **存储 Steam 个人库存中的背景图物品，并在个人资料页预览**
 
-![Feature-2](/docs/assets/img/feature-2.gif)
+![Feature-2](https://cdn.jsdelivr.net/gh/mtmzorro/steam-design-tools@1.0.1/docs/assets/img/feature-2.gif)
 
 **展柜（艺术品、截图）替换本地图片实时预览，按钮提示当前图片尺寸**
 
-![Feature-3](/docs/assets/img/feature-3.gif)
+![Feature-3](https://cdn.jsdelivr.net/gh/mtmzorro/steam-design-tools@1.0.1/docs/assets/img/feature-3.gif)
 
 ## 开发
 

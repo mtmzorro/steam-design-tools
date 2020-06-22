@@ -1,8 +1,8 @@
 {
 	"manifest_version": 2,
 	"name": "Steam Design Tools",
-	"version": "1.0.0",
-	"description": "Steam Design Tools",
+	"version": "1.0.1",
+	"description": "一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具",
 	"author": "mTmzorro",
 	"icons": {
 		"48": "chrome-assets/img/icon.png",
