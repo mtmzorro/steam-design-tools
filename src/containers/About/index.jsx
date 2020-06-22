@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import './index.scss';
-import wechatUrl from '../../assets/img/wechat.png'
+import wechatUrl from '../../assets/img/wechat-admire.png'
 
 export default class About extends Component {
     render() {
