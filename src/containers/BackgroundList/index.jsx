@@ -43,7 +43,7 @@ export default class BackgroundList extends Component {
             );
             operateContent = (
                 <div className="bl-operate">
-                    <a className="button button-help" href="https://github.com/mtmzorro/steam-design-tools" target="_blank" rel="noopener noreferrer">帮 助</a>
+                    <a className="button button-help" href="https://steamdt.mtmzorro.com/" target="_blank" rel="noopener noreferrer">帮 助</a>
                 </div>
             );
         } else {

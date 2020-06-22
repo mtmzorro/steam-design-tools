@@ -21,7 +21,7 @@ export default class About extends Component {
                     </div>
                 </div>
                 <div className="about-operate">
-                    <Link to="/index.html" className="button button-help">帮  助</Link>
+                    <a target="_blank" rel="noopener noreferrer" href="https://steamDT.mtmzorro.com" className="button button-help">帮  助</a>
                     <Link to="/index.html" className="button button-return">返  回</Link>
                 </div>
             </div>
