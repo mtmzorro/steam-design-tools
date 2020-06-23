@@ -6,8 +6,8 @@
 
 ## 下载安装
 
-* [Chrome 网上应用店](#) 正在上架中
-* [Releases](https://github.com/mtmzorro/steam-design-tools/releases) `.crx` 文件下载，然后在 Chrome 中打开 chrome://extensions/ 将 `.crx` 文件托进去即可安装
+* [Chrome 网上应用店](https://chrome.google.com/webstore/detail/steam-design-tools/ipndeiedddcbjjlfbinflapdlommhalf) 上架完成
+* [Releases](https://github.com/mtmzorro/steam-design-tools/releases) ~~`.crx` 文件下载，然后在 Chrome 中打开 chrome://extensions/ 将 `.crx` 文件托进去即可安装~~ Chrome 最新版本已经阻止`.crx`直接运行，请下载`.zip`文件包，解压后进入`chrome://extensions/`点击「加载已解压的扩展程序」按钮。
 
 
 ## 功能
@@ -29,7 +29,7 @@
 
 **展柜（艺术品、截图）替换本地图片实时预览，按钮提示当前图片尺寸**
 
-![Feature-3](https://cdn.jsdelivr.net/gh/mtmzorro/steam-design-tools@1.0.1/docs/assets/img/feature-3.gif)
+![Feature-3](/docs/assets/img/feature-3.gif)
 
 ## 开发
 
