@@ -10,6 +10,8 @@
  */
 class SteamImgUrl {
     constructor(url) {
+        this.isShopUrl = false;
+        
         if(!url) {
             // empty url return background_preview
             this.url = 'https://store.st.dl.pinyuncloud.com/public/images/applications/store/background_preview.png';
@@ -18,9 +20,9 @@ class SteamImgUrl {
             this.url = url;
             this.defaultUrl = '';
             // shop img used in summerSale
+            this.isShopUrl = /\/economy\/profilebackground/.test(url);
             this.resetUrl();
         }
-        this.isShopUrl = /\/economy\/profilebackground/.test(url);
     }
     resetUrl() {
         if (this.isShopUrl) {
@@ -101,31 +103,40 @@ const chromeHandle = {
      * @param {function} callback callback function 回调函数
      */
     storageAdd(table, data, callback) {
-        chrome.storage.local.get([table], result => {
-            // 现有数据缓存 
-            let cache = [];
-            // 新的待存储对象
-            let storageData = {};
-            // 当前表已存在则获取其浅拷贝增量增加并判断重复
-            if (typeof result[table] !== 'undefined') {
-                cache = result[table].slice();
-                // 如果当前 data 一存在则 return
-                for (const key in cache) {
-                    if (cache.hasOwnProperty(key)) {
-                        // 经过测试 Steam 背景图物品 name 有相同情况
-                        if (cache[key].marketUrl === data.marketUrl) return;
+        try {
+            console.log('Steam Design Tools: will add storage', data);
+            chrome.storage.local.get([table], result => {
+                // 现有数据缓存 
+                let cache = [];
+                // 新的待存储对象
+                let storageData = {};
+                // 当前表已存在则获取其浅拷贝增量增加并判断重复
+                if (typeof result[table] !== 'undefined') {
+                    cache = result[table].slice();
+                    // 如果当前 data 一存在则 return
+                    for (const key in cache) {
+                        if (cache.hasOwnProperty(key)) {
+                            // 经过测试 Steam 背景图物品 name 有相同情况
+                            if (cache[key].marketUrl === data.marketUrl) {
+                                new SteamNotifications('\u274C ' + cache[key].name + ' 已存在');
+                                return;
+                            };
+                        }
                     }
                 }
-            }
-            // 当前表不存在直接增加新数据
-            cache.push(data);
-            storageData[table] = cache;
-            // 把修改完缓存数据写入存储
-            chrome.storage.local.set(storageData, () => {
-                // 执行回调函数 并把存储数据作为参数返回
-                callback(storageData[table]);
+                // 当前表不存在直接增加新数据
+                cache.push(data);
+                storageData[table] = cache;
+                // 把修改完缓存数据写入存储
+                chrome.storage.local.set(storageData, () => {
+                    // 执行回调函数 并把存储数据作为参数返回
+                    callback(storageData[table]);
+                });
             });
-        });
+        } catch (error) {
+            console.log('Steam Design Tools: add storage error', error);
+            new SteamNotifications('\u274C 操作失败，请刷新页面再次尝试。');
+        }
     },
     /**
      * sendBadgeMsg
@@ -140,7 +151,7 @@ const chromeHandle = {
             data: num.toString()
         }
         // 发送消息给 background.js
-        chrome.runtime.sendMessage(message, response => { });
+        chrome.runtime.sendMessage(message, response => {});
     }
 };
 
@@ -187,12 +198,17 @@ const inventoryTools = {
             const inventorySidebar = $(this).parents('.inventory_iteminfo');
             const marketSection = inventorySidebar.find('.market_item_action_buyback_at_price');
 
+            const itemName = inventorySidebar.find('.hover_item_name').text();
+
             // 背景图素材所有数据
             let backgroundData = APP_CONFIG.getTableStructure();
             backgroundData = {
-                name: inventorySidebar.find('.hover_item_name').text(),
+                name: itemName,
                 backgroundUrl: new SteamImgUrl($(this).attr('data-url')).getFullSize(),
-                marketUrl: marketSection.prev().prev().find('a').attr('href'),
+                // summerSale background without href
+                marketUrl: marketSection.length 
+                        ? marketSection.prev().prev().find('a').attr('href')
+                        : 'https://store.steampowered.com/points/shop/c/backgrounds?background_name=' + itemName,
                 marketPrice: _this.priceExtract(marketSection.prev().html()),
                 isLike: false
             };
@@ -203,7 +219,7 @@ const inventoryTools = {
                     // Set Badge
                     chromeHandle.sendBadgeMsg(data.length);
                     // Notifications result
-                    new SteamNotifications(backgroundData.name + ' 成功添加');
+                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
                 }
             });
         });
@@ -218,7 +234,7 @@ const inventoryTools = {
      */
     priceExtract(str) {
         // 解析到加载中异常返回 ??.00
-        if (/login\/throbber.gif/.test(str)) return '??.00';
+        if (!str || /login\/throbber.gif/.test(str)) return '??.00';
 
         const strResult = str.split('<br>')[0];
         const divSymbol = /：/.test(str) ? '：' : ':';
@@ -234,11 +250,15 @@ const profileTools = {
     init() {
         // 非个人资料页不处理
         // @example https://steamcommunity.com/id/userid
-        if (!/\/id/.test(window.location.href) || $('.profile_page').length === 0) return;
+        // @example https://steamcommunity.com/profiles/123123123123
+        const href = window.location.href;
+        if (!/\/id/.test(href) && !/\/profiles/.test(href)) return;
         // Init showcase preview
         this.setShowcasePreview();
         // Set message listener wait message from chrome extension 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            console.log('Steam Design Tools: receive message ↓', sender, request);
+            sendResponse('Steam Design Tools: received');
             // Set profile background
             if (request.action === APP_CONFIG.actionType.SET_BACKGROUND && request.data) {
                 this.setProfileBackground(request.data);
@@ -253,8 +273,14 @@ const profileTools = {
     setProfileBackground(backgroundUrl) {
         // 资料页容器
         const profilePage = $('.profile_page').eq(1);
+        // hide animate background img
+        if($('.profile_animated_background').length) {
+            $('.profile_animated_background').hide();
+        }
+        // set background img 
         profilePage.css('background-image', 'url(' + backgroundUrl + ')')
             .find('.profile_background_image_content').css('background-image', 'url(' + backgroundUrl + ')');
+        
     },
 
     /**
@@ -359,7 +385,7 @@ const marketTools = {
                     // Set Badge
                     chromeHandle.sendBadgeMsg(data.length);
                     // Notifications result
-                    new SteamNotifications(backgroundData.name + ' 成功添加');
+                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
                 }
             });
         });
@@ -418,11 +444,10 @@ const summerSale = {
             backgroundData = {
                 name: itemName,
                 backgroundUrl: new SteamImgUrl(backgroundUrlEle.attr('src')).getFullSize(),
-                marketUrl: 'https://store.steampowered.com/points/shop/c/backgrounds?backgroundname=' + itemName,
+                marketUrl: 'https://store.steampowered.com/points/shop/c/backgrounds?background_name=' + itemName,
                 marketPrice: curlistItem.find('.loyaltypoints_Amount_BqFe2').text() + '点数',
                 isLike: false
             };
-            console.log('Steam Design Tools: add backgroundData', backgroundData);
 
             // Save data into chrome storage
             chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
@@ -430,7 +455,7 @@ const summerSale = {
                     // Set Badge
                     chromeHandle.sendBadgeMsg(data.length);
                     // Notifications result
-                    new SteamNotifications(backgroundData.name + ' 成功添加');
+                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
                 }
             });
             

@@ -56,9 +56,16 @@ export default class BackgroundItem extends Component {
                 action: APP_CONFIG.actionType.SET_BACKGROUND,
                 data: url
             }
+            // query current tab id
             chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+                // runtime.onMessage in content-scripts/index.js will fired
                 chrome.tabs.sendMessage(tabs[0].id, message, response => {
-                    // if(callback) callback(response);
+                    if (response) {
+                        console.log(response)
+                    } else {
+                        console.log('Steam Design Tools: error on sendMessage');
+                        alert('识别不到 Steam 个人主页，请刷新个人主页，并保持为浏览器当前激活标签页。');
+                    }
                 });
             });
         }

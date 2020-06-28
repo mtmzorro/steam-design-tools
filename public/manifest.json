@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "Steam Design Tools",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"description": "一个 Steam 个人资料页背景图和展柜设计增强工具",
 	"author": "mTmzorro",
 	"icons": {
