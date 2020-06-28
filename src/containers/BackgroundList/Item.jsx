@@ -16,7 +16,11 @@ export default class BackgroundItem extends Component {
                 <div className="bi-drag"><span className="iconfont icon-drag-vertical"></span></div>
                 <div className="bi-img">
                     <a title={name} href={marketUrl} target="_blank" rel="noopener noreferrer">
-                        <img src={backgroundUrl + '96fx96f'} width="92px" height="92px" alt="" />
+                        {
+                            /\/economy\/profilebackground/.test(backgroundUrl) 
+                            ? <img src={backgroundUrl + '?size=96x60'} alt="background-item" />
+                            : <img src={backgroundUrl + '96fx96f'} alt="background-item" />
+                        }
                     </a>
                 </div>
                 <div className="bi-name">

@@ -6,26 +6,41 @@
  * Steam CDN Img resize
  * @param {string} url
  * @example https://steamcommunity-a.akamaihd.net/economy/image/-9a81dlWLwJ2UUGcVs_nsVtzdOEdtWwKGZZLQHTxH5rd9eDAjcFyv45SRYAFMIcKL_PArgVSL403ulRUWEndVKv0jp6KCw07IVMPs7n9LwU0h6HNcjlBtYvlkteKk_SgNbmIxT8J7JUp2OiYrd-gixq-uxR6VrmHMw/330x192
+ * @example https://steamcommunity.com/economy/profilebackground/items/292030/7dd0b68fe2bca80ecdc62f4a7262353df6ed2c2c.jpg?size=320x200
  */
 class SteamImgUrl {
     constructor(url) {
-        this.url = url;
-        this.defaultUrl = '';
-        this.resetUrl();
+        if(!url) {
+            // empty url return background_preview
+            this.url = 'https://store.st.dl.pinyuncloud.com/public/images/applications/store/background_preview.png';
+            this.defaultUrl = this.url;
+        } else {
+            this.url = url;
+            this.defaultUrl = '';
+            // shop img used in summerSale
+            this.resetUrl();
+        }
+        this.isShopUrl = /\/economy\/profilebackground/.test(url);
     }
     resetUrl() {
-        let urlArray = this.url.split('/');
-        urlArray.pop();
-        this.defaultUrl = urlArray.join('/') + '/';
+        if (this.isShopUrl) {
+            // summerSale img
+            this.defaultUrl = this.url.split('?')[0];
+        } else {
+            // steam market img
+            let urlArray = this.url.split('/');
+            urlArray.pop();
+            this.defaultUrl = urlArray.join('/') + '/';
+        }
     }
     getFullSize() {
         return this.defaultUrl;
     }
     get96size() {
-        return this.defaultUrl + '96fx96f';
+        return this.isShopUrl ?  this.defaultUrl + '?size=96x96' : this.defaultUrl + '96fx96f';
     }
     get62size() {
-        return this.defaultUrl + '62fx62f';
+        return this.isShopUrl ?  this.defaultUrl + '?size=62x62' : this.defaultUrl + '96fx96f';
     }
 };
 
@@ -220,6 +235,8 @@ const profileTools = {
         // 非个人资料页不处理
         // @example https://steamcommunity.com/id/userid
         if (!/\/id/.test(window.location.href) || $('.profile_page').length === 0) return;
+        // Init showcase preview
+        this.setShowcasePreview();
         // Set message listener wait message from chrome extension 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             // Set profile background
@@ -227,8 +244,6 @@ const profileTools = {
                 this.setProfileBackground(request.data);
             }
         });
-        // Init showcase preview
-        this.setShowcasePreview();
     },
     /**
      * setProfileBackground
@@ -352,10 +367,84 @@ const marketTools = {
 };
 
 /**
+ * summerSale
+ * Steam 夏促增强
+ */
+const summerSale = {
+    init() {
+        // 非 Steam 市场不处理
+        // @example https://steamcommunity.com/market/search?q=XXX
+        if (!/\/points\/shop/.test(window.location.href)) return;
+        this.setAddButton();
+        console.log('Steam Design Tools: SummerSale worked');
+    },
+    /**
+     * setAddButton
+     * 增加 background 暂存 button
+     */
+    setAddButton() {
+        // Steam 物品项
+        const listItemClass = '.rewarditem_ItemContainer_skI5t';
+        const backgroundUrlClass = 'img.rewarditem_ImageBackground_U-rBC';
+
+        // addButton 
+        const addButton = $('<span class="sdt-add-button summersale" title="使用 Steam Design tools 预览">+</span>');
+        // add addButton
+        $(listItemClass).live('mouseenter', function () {
+            // video not support for now
+            if (!$(this).find(backgroundUrlClass).length) return;
+            // 当前 Steam 物品项
+            $(this).append(addButton);
+        }).live('mouseleave', function () {
+            // video not support for now
+            if (!$(this).find(backgroundUrlClass).length) return;
+            $(this).find('.sdt-add-button').remove();
+        });
+
+        // addButton 暂存预览功能触发
+        $('.sdt-add-button').live('click', function (event) {
+            event.preventDefault();
+            // event.stopPropagation();
+
+            // 当前 Steam 物品项
+            const curlistItem = $(this).parents(listItemClass);
+            const backgroundUrlEle = curlistItem.find(backgroundUrlClass);
+
+            // 处理 Steam 可能出现的不存背景图的背景图商品异常
+            if (backgroundUrlEle.length === 0) return;
+            const itemName = curlistItem.find('.rewarditem_Name_EccZY').text();
+
+            let backgroundData = APP_CONFIG.getTableStructure();
+            backgroundData = {
+                name: itemName,
+                backgroundUrl: new SteamImgUrl(backgroundUrlEle.attr('src')).getFullSize(),
+                marketUrl: 'https://store.steampowered.com/points/shop/c/backgrounds?backgroundname=' + itemName,
+                marketPrice: curlistItem.find('.loyaltypoints_Amount_BqFe2').text() + '点数',
+                isLike: false
+            };
+            console.log('Steam Design Tools: add backgroundData', backgroundData);
+
+            // Save data into chrome storage
+            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
+                if (typeof data !== 'undefined' && data.length > 0) {
+                    // Set Badge
+                    chromeHandle.sendBadgeMsg(data.length);
+                    // Notifications result
+                    new SteamNotifications(backgroundData.name + ' 成功添加');
+                }
+            });
+            
+        });
+
+    }
+};
+
+/**
  * DOM READY 注册事件
  */
 $(document).ready(function () {
     inventoryTools.init();
     profileTools.init();
     marketTools.init();
+    summerSale.init();
 });
