@@ -161,9 +161,6 @@ const chromeHandle = {
  */
 const inventoryTools = {
     init() {
-        // 非 Steam 个人库存增强不处理
-        // @example https://steamcommunity.com/id/userid/inventory/
-        if (!/\/inventory/.test(window.location.href)) return;
         // Init inventorySidebar
         this.inventorySidebar();
     },
@@ -248,11 +245,6 @@ const inventoryTools = {
  */
 const profileTools = {
     init() {
-        // 非个人资料页不处理
-        // @example https://steamcommunity.com/id/userid
-        // @example https://steamcommunity.com/profiles/123123123123
-        const href = window.location.href;
-        if (!/\/id/.test(href) && !/\/profiles/.test(href)) return;
         // Init showcase preview
         this.setShowcasePreview();
         // Set message listener wait message from chrome extension 
@@ -329,9 +321,6 @@ const profileTools = {
  */
 const marketTools = {
     init() {
-        // 非 Steam 市场不处理
-        // @example https://steamcommunity.com/market/search?q=XXX
-        if (!/\/market/.test(window.location.href) || $('.market_listing_row').length === 0) return;
         this.setAddButton();
     },
     /**
@@ -339,6 +328,9 @@ const marketTools = {
      * 增加 background 暂存 button
      */
     setAddButton() {
+        if ($('.market_listing_row').length === 0) {
+            return;
+        }
         // Steam 物品项
         const listItem = $('.market_listing_row')
         // addButton 相关
@@ -398,9 +390,6 @@ const marketTools = {
  */
 const summerSale = {
     init() {
-        // 非 Steam 市场不处理
-        // @example https://steamcommunity.com/market/search?q=XXX
-        if (!/\/points\/shop/.test(window.location.href)) return;
         this.setAddButton();
         console.log('Steam Design Tools: SummerSale worked');
     },
@@ -468,8 +457,37 @@ const summerSale = {
  * DOM READY 注册事件
  */
 $(document).ready(function () {
-    inventoryTools.init();
-    profileTools.init();
-    marketTools.init();
-    summerSale.init();
+    const href = window.location.href;
+
+    /**
+     * isProfile 个人资料页
+     * @example https://steamcommunity.com/id/userid
+     * @example https://steamcommunity.com/profiles/123123123123
+     */
+    const isProfile = (/\/id\//.test(href) || /\/profiles\//.test(href)) 
+        && !/\/inventory/.test(href)
+        && !/\/edit/.test(href);
+    /**
+     * isInventory 个人库存
+     * @example https://steamcommunity.com/id/userid/inventory/
+     * @example https://steamcommunity.com/id/userid/inventory
+     */
+    const isInventory = /\/inventory/.test(href);
+    /**
+     * isMarket Steam 市场
+     * @example https://steamcommunity.com/market/
+     * @example https://steamcommunity.com/market
+     */
+    const isMarket = /\/market/.test(href);
+    /**
+     * isSummerSale 夏促点数商城
+     * @example https://store.steampowered.com/points/shop
+     * @example https://store.steampowered.com/points?snr=1_4_600__118&snr=1_4_600__118
+     */
+    const isSummerSale = /\/points/.test(href);
+    
+    isInventory && inventoryTools.init();
+    isProfile && profileTools.init();
+    isMarket && marketTools.init();
+    isSummerSale && summerSale.init();
 });
