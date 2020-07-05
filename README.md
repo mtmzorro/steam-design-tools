@@ -10,6 +10,9 @@
 * [Releases](https://github.com/mtmzorro/steam-design-tools/releases) ~~`.crx` 文件下载，然后在 Chrome 中打开 chrome://extensions/ 将 `.crx` 文件托进去即可安装~~ Chrome 最新版本已经阻止`.crx`直接运行，请下载`.zip`文件包，解压后进入`chrome://extensions/`点击「加载已解压的扩展程序」按钮。
 
 ## 更新日志
+### 1.1.1
+* Bug Fix 修复编辑个人资料页相关设置时，profile/edit 仍然初始化个人资料页展柜等增强工具
+
 ### 1.1.0
 * Feature 新增存储 Steam 2020 夏促中个人资料背景用于实时预览，因 Steam 动态背景视频 URL 暂无可用规则获取完整视频，暂不支持动态背景。
 * Feature 完善操作结果提示。
