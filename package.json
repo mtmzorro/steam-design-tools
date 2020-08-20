@@ -13,8 +13,10 @@
         "react-scripts": "3.0.1"
     },
     "scripts": {
+        "zip": "node ./config-zip.js",
         "start": "react-app-rewired start",
         "build": "react-app-rewired build",
+        "postbuild": "yarn zip",
         "test": "react-scripts test",
         "eject": "react-app-rewired eject"
     },
@@ -37,6 +39,7 @@
         ]
     },
     "devDependencies": {
+        "archiver": "^5.0.0",
         "copy-webpack-plugin": "^5.0.4",
         "react-app-rewired": "^2.1.3"
     }
