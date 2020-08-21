@@ -2,8 +2,7 @@
 import React, { Component } from 'react';
 import ReactDragListView from 'react-drag-listview';
 import APP_CONFIG from '../../config/config';
-import _ from 'lodash';
-import Item from './Item';
+import Item from './item';
 import './index.scss';
 import mockData from '../../mock/backgroundData.json';
 
@@ -13,70 +12,6 @@ export default class BackgroundList extends Component {
         this.state = {
             backgorundList: []
         };
-    }
-
-    render() {
-        const _this = this;
-        const backgorundList = this.state.backgorundList;
-        let backgorundListContent;
-        let operateContent;
-        // ReactDragListView
-        const dragProps = {
-            onDragEnd(fromIndex, toIndex) {
-                _this.dragItem(fromIndex, toIndex);
-            },
-            nodeSelector: 'li',
-            handleSelector: '.bi-drag',
-            lineClassName: 'drap-line'
-        };
-
-        // backgorundList Empty Page 冷启动
-        if (backgorundList.length === 0) {
-            backgorundListContent = (
-                <div className="empty-info">
-                    <div className="ei-icon"><span className="iconfont icon-steam"></span></div>
-                    <div className="ei-title">在浏览器 Steam 页面中选择需预览的背景图</div>
-                    <div className="ei-content">
-                        请您用当前浏览器打开 Steam，然后在「Steam 市场」搜索结果列表中点击价格左侧的<strong>「+」</strong>按钮，或者在「物品库存」页背景图详情右侧点击<strong>「在 Steam Design Tools 中预览」</strong>将背景图片缓存至工具中。
-                    </div>
-                </div>
-            );
-            operateContent = (
-                <div className="bl-operate">
-                    <a className="button button-help" href="https://steamdt.mtmzorro.com/" target="_blank" rel="noopener noreferrer">帮 助</a>
-                </div>
-            );
-        } else {
-            backgorundListContent = (
-                <ReactDragListView {...dragProps}>
-                    <ul>
-                        {
-                            backgorundList.map((item) =>
-                                <Item key={item.marketUrl} data={item}
-                                    onLike={this.likeItem}
-                                    onRemove={this.removeItem}
-                                />
-                            )
-                        }
-                    </ul>
-                </ReactDragListView>
-            );
-            operateContent = (
-                <div className="bl-operate">
-                    <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
-                    <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
-                </div>
-            );
-        }
-
-        return (
-            <div className="background-list">
-                <div className="bl-wrap">
-                    {backgorundListContent}
-                </div>
-                {operateContent}
-            </div>
-        )
     }
 
     componentDidMount() {
@@ -90,6 +25,35 @@ export default class BackgroundList extends Component {
         } else {
             // ENV development use mock data
             this.setState({ backgorundList: mockData });
+        }
+    }
+
+    /** 
+     * setBackgound
+     * Change Steam profile page's background image
+     * 应用当前背景图至 Steam 个人资料页
+     * @param {string} url
+     */
+    setBackgound = url => {
+        // ENV production use Chrome API
+        if (process.env.NODE_ENV === 'production') {
+            // Send message to content-script/index.js
+            const message = {
+                action: APP_CONFIG.actionType.SET_BACKGROUND,
+                data: url
+            }
+            // query current tab id
+            chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+                // runtime.onMessage in content-scripts/index.js will fired
+                chrome.tabs.sendMessage(tabs[0].id, message, response => {
+                    if (response) {
+                        console.log(response)
+                    } else {
+                        console.log('Steam Design Tools: error on sendMessage');
+                        alert('识别不到 Steam 个人主页，请刷新个人主页，并保持为浏览器当前激活标签页。');
+                    }
+                });
+            });
         }
     }
 
@@ -116,10 +80,14 @@ export default class BackgroundList extends Component {
      */
     likeItem = data => {
         // Use marketUrl find Background item data
-        const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
-        let cache = this.state.backgorundList.slice();
-
-        cache[index].isLike = cache[index].isLike ? false : true;
+        const { backgorundList } = this.state;
+        const cache = backgorundList.map((item, index) => {
+            if (item.marketUrl === data) {
+                item.isLike = !item.isLike;
+            }
+            return item;
+        })
+        
         this.setState({ backgorundList: cache });
         this.updateChromeStorage(cache);
     }
@@ -131,10 +99,11 @@ export default class BackgroundList extends Component {
      * @param {string} data unique value in Background item, name is not unique, use marketUrl instead. name 不唯一
      */
     removeItem = data => {
-        const index = _.findIndex(this.state.backgorundList, ['marketUrl', data]);
-        let cache = this.state.backgorundList.slice();
+        const { backgorundList } = this.state;
+        const cache = backgorundList.filter((item) => {
+            return item.marketUrl !== data;
+        })
 
-        cache.splice(index, 1);
         this.setState({ backgorundList: cache });
         this.updateChromeStorage(cache);
     }
@@ -147,9 +116,10 @@ export default class BackgroundList extends Component {
      * @param {number} toIndex target index
      */
     dragItem = (fromIndex, toIndex) => {
-        const cache = this.state.backgorundList.slice();
+        const cache = [ ...this.state.backgorundList ];
         const item = cache.splice(fromIndex, 1)[0];
         cache.splice(toIndex, 0, item);
+
         this.setState({ backgorundList: cache });
         this.updateChromeStorage(cache);
     }
@@ -160,9 +130,9 @@ export default class BackgroundList extends Component {
      * 删除未标星项目
      */
     clearUnLikeItem = () => {
-        let cache = this.state.backgorundList.slice();
+        const { backgorundList } = this.state;
+        const cache = backgorundList.filter(item => item.isLike);
 
-        cache = cache.filter(item => item.isLike);
         this.setState({ backgorundList: cache });
         this.updateChromeStorage(cache);
     }
@@ -174,5 +144,83 @@ export default class BackgroundList extends Component {
     clearAllItem = () => {
         this.setState({ backgorundList: [] });
         this.updateChromeStorage([]);
+    }
+
+    
+
+    render() {
+        const _this = this;
+        const { backgorundList } = this.state;
+
+        // ReactDragListView
+        const dragProps = {
+            onDragEnd(fromIndex, toIndex) {
+                _this.dragItem(fromIndex, toIndex);
+            },
+            nodeSelector: 'li',
+            handleSelector: '.bi-drag',
+            lineClassName: 'drap-line'
+        };
+
+        // backgorundList Empty Page 冷启动
+        const generateBackgoundList = () => {
+            return (
+                <>
+                    {backgorundList && backgorundList.length > 0 ? (
+                        <ReactDragListView {...dragProps}>
+                            <ul>
+                                {backgorundList.map((item) => (
+                                    <Item
+                                        key={item.marketUrl}
+                                        item={item}
+                                        onLike={this.likeItem}
+                                        onRemove={this.removeItem}
+                                        setBackgound={this.setBackgound}
+                                    />
+                                ))}
+                            </ul>
+                        </ReactDragListView>
+                    ) : (
+                        <div className="empty-info">
+                            <div className="ei-icon">
+                                <span className="iconfont icon-steam"></span>
+                            </div>
+                            <div className="ei-title">
+                                在浏览器 Steam 页面中选择需预览的背景图
+                            </div>
+                            <div className="ei-content">
+                                请您用当前浏览器打开 Steam，然后在「Steam 市场」搜索结果列表中点击价格左侧的<strong>「+」</strong>按钮，或者在「物品库存」页背景图详情右侧点击<strong>「在 Steam Design Tools 中预览」</strong>将背景图片缓存至工具中。
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        }
+        // Bottom operate
+        const generateOperate = () => {
+            return (
+                <>
+                    {backgorundList && backgorundList.length > 0 ? (
+                        <div className="bl-operate">
+                            <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
+                            <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
+                        </div>
+                    ) : (
+                        <div className="bl-operate">
+                            <a className="button button-help" href="https://steamdt.mtmzorro.com/" target="_blank" rel="noopener noreferrer">帮 助</a>
+                        </div>
+                    )}
+                </>
+            )
+        }
+
+        return (
+            <div className="background-list">
+                <div className="bl-wrap">
+                    {generateBackgoundList()}
+                </div>
+                {generateOperate()}
+            </div>
+        )
     }
 }
