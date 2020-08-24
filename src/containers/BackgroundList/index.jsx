@@ -20,7 +20,7 @@ export default class BackgroundList extends Component {
         if (process.env.NODE_ENV === 'production') {
             // ENV production get data from Chrome storage
             ChromeStorage.get(APP_CONFIG.TABLE_NAME).then((data) => {
-                const resultData = data[APP_CONFIG.TABLE_NAME] ? data[APP_CONFIG.TABLE_NAME] : [];
+                const resultData = data.result[APP_CONFIG.TABLE_NAME] ? data.result[APP_CONFIG.TABLE_NAME] : [];
                 this.setState({ backgorundList: resultData })
             });
         } else {
@@ -65,7 +65,7 @@ export default class BackgroundList extends Component {
      */
     updateChromeStorage = (data) => {
         if (process.env.NODE_ENV === 'production') {
-            ChromeStorage.set({[APP_CONFIG.TABLE_NAME]: data}).then((data) => {
+            ChromeStorage.set(APP_CONFIG.TABLE_NAME, data).then((data) => {
                 if (data.success) {
                     console.log('Storage saved');
                 }

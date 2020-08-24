@@ -76,54 +76,51 @@ class ChromeStorage {
      */
     static insertInto (itemName, insertData, key) {
         return this.get(itemName).then((data) => {
-            if (data && data.success) {
-                let newItemData = [];
-
-                // localStorage item is exists
-                if (typeof data.result[itemName] !== 'undefined') {
-                    newItemData = [ ...data.result[itemName] ];
-                    // insertData key is exists
-                    const isExist = newItemData.find((value) => {
-                        return value[key] === insertData[key];
-                    });
-                    // insertData is exists return
-                    if (isExist) {
-                        return {
-                            success: true,
-                            isExist: true,
-                            result: newItemData
-                        }
-                    }
-                }
-                // add insertData
-                newItemData.push(insertData);
-                return this.set(itemName, newItemData).then((data) => {
-                    if (data && data.success) {
-                        return {
-                            success: true,
-                            isExist: false,
-                            result: data.result
-                        }
-                    } else {
-                        return {
-                            success: false,
-                            isExist: false,
-                            result: data.result
-                        }
-                    }
-                })
-            } else {
+            // get exception
+            if (!data.success) {
                 return {
                     success: false,
                     isExist: false,
                     result: data.result
                 }
             }
+
+            let newItemData = [];
+            // localStorage item is exists
+            if (typeof data.result[itemName] !== 'undefined') {
+                newItemData = [ ...data.result[itemName] ];
+                // insertData key is exists
+                const isExist = newItemData.find((value) => {
+                    return value[key] === insertData[key];
+                });
+                // insertData is exists return
+                if (isExist) {
+                    return {
+                        success: true,
+                        isExist: true,
+                        result: newItemData
+                    }
+                }
+            }
+            // add insertData
+            newItemData.push(insertData);
+            return this.set(itemName, newItemData).then((data) => {
+                if (data.success) {
+                    return {
+                        success: true,
+                        isExist: false,
+                        result: data.result
+                    }
+                } else {
+                    return {
+                        success: false,
+                        isExist: false,
+                        result: data.result
+                    }
+                }
+            })
         })
     }
 }
 
-// 需要同时兼容在 Chrome 插件中以全局变量方式存在
-if (typeof module !== 'undefined') {
-    module.exports = ChromeStorage;
-}
+export default ChromeStorage;

@@ -7,17 +7,15 @@ const fs = require("fs");
 
 const appDirectory = fs.realpathSync(process.cwd());
 
-
 module.exports = function override(config, env) {
     const isEnvDevelopment = env === 'development';
     const isEnvProduction = env === 'production';
 
     // ENV development on yarn start
-    if (isEnvDevelopment) {
-
-    }
+    if (isEnvDevelopment) { }
     // ENV production on yarn build
     if (isEnvProduction) {
+        // 新增 chrome content-scripts 入口
         config.entry = {
             'static/js/index': [
                 path.join(appDirectory, 'src/index.js')
@@ -27,35 +25,33 @@ module.exports = function override(config, env) {
             ]
         };
 
-        config.output = {
+        // 修改 出口
+        config.output = { ...config.output, ...{
             pathinfo: isEnvDevelopment,
             path: path.resolve(appDirectory, 'build'),
             filename: '[name].bundle.js',
-            chunkFilename: 'static/js/[name].chunk.js',
-        }
+            chunkFilename: '[name].chunk.js',
+        }};
+        
+        // 多出口，chrome 扩展中和 react 中不能共享 chunks，需要关闭 splitChunks
+        // https://webpack.docschina.org/plugins/split-chunks-plugin/#splitchunkschunks
+        delete config.optimization.splitChunks;
+        delete config.optimization.runtimeChunk;
 
-        config.optimization = {
-            splitChunks: {
-                chunks (chunk) {
-                    // exclude all 
-                    // https://webpack.docschina.org/plugins/split-chunks-plugin/#splitchunkschunks
-                    return true;
-                },
-                name: false,
-            },
-            // runtimeChunk: {
-            //     name: false
-            // }
-          }
+        // 删除 原有 HtmlWebpackPlugin、ManifestPlugin、GenerateSW
+        const pluginsFilted = config.plugins.filter((item) => {
+            const constructorStr = item.constructor.toString();
+            const isTargetPlugin =
+                constructorStr.indexOf('class HtmlWebpackPlugin') > -1 ||
+                constructorStr.indexOf('ManifestPlugin') > -1 ||
+                constructorStr.indexOf('class GenerateSW') > -1;
+            return isTargetPlugin ? false : true;
+        });
+        config.plugins = [ ...pluginsFilted ];
 
-        // 删除原有 HtmlWebpackPlugin 插件
-        for (let i = 0; i < config.plugins.length; i++) {
-            let item = config.plugins[i];
-            if (item.constructor.toString().indexOf('class HtmlWebpackPlugin') > -1) {
-                config.plugins.splice(i, 1);
-            }
-        }
+        // 配置 plugins
         const plugins = [
+            // 新增 HtmlWebpackPlugin
             new HtmlWebpackPlugin(
                 Object.assign(
                     {},
@@ -67,16 +63,16 @@ module.exports = function override(config, env) {
                     isEnvProduction
                     ? {
                         minify: {
-                        removeComments: true,
-                        collapseWhitespace: true,
-                        removeRedundantAttributes: true,
-                        useShortDoctype: true,
-                        removeEmptyAttributes: true,
-                        removeStyleLinkTypeAttributes: true,
-                        keepClosingSlash: true,
-                        minifyJS: true,
-                        minifyCSS: true,
-                        minifyURLs: true,
+                            removeComments: true,
+                            collapseWhitespace: true,
+                            removeRedundantAttributes: true,
+                            useShortDoctype: true,
+                            removeEmptyAttributes: true,
+                            removeStyleLinkTypeAttributes: true,
+                            keepClosingSlash: true,
+                            minifyJS: true,
+                            minifyCSS: true,
+                            minifyURLs: true,
                         },
                     }
                     : undefined
@@ -90,15 +86,11 @@ module.exports = function override(config, env) {
                 {
                     from: "src/content-scripts/background.js",
                     to: "chrome-assets/content-scripts",
-                },
-                // {
-                //     from: "src/config/config.js",
-                //     to: "chrome-assets/content-scripts",
-                // },
+                }
             ]),
         ]
         // add CopyPlugin
-        config.plugins.push(...plugins);
+        config.plugins.push( ...plugins );
     }
     return config;
 };

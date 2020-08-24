@@ -1,5 +1,6 @@
-/* global $ chrome APP_CONFIG ChromeStorage*/
-// import APP_CONFIG from '../config/config'
+/* global $ chrome */
+import APP_CONFIG from '../config/config'
+import ChromeStorage from '../utils/chromeAPI'
 
 /**
  * SteamImgUrl
@@ -98,6 +99,7 @@ class ChromeBridge {
      * @param {string} key Used to determine whether insertData is exists
      */
     static storageInsert (itemName, insertData, key) {
+        console.log('Steam Design Tools: will add storage', insertData);
         ChromeStorage.insertInto(itemName, insertData, key).then((data) => {
             if (!data.success) {
                 console.log('Steam Design Tools: storage insert error', data.result);
