@@ -1,5 +1,5 @@
-/* global $ APP_CONFIG*/
-// APP_CONFIG import from src/config/config
+/* global $ chrome APP_CONFIG ChromeStorage*/
+// import APP_CONFIG from '../config/config'
 
 /**
  * SteamImgUrl
@@ -90,61 +90,37 @@ class SteamNotifications {
     }
 };
 
-/**
- * chromeHandle
- * chrome API 相关方法
- */
-const chromeHandle = {
+class ChromeBridge {
     /**
-     * storageAdd
-     * 向 Chrome storage 目标表内增加数据
-     * @param {string} table_name
-     * @param {object} data 
-     * @param {function} callback callback function 回调函数
+     * storageInsert 
+     * @param {string} itemName 
+     * @param {object} insertData 
+     * @param {string} key Used to determine whether insertData is exists
      */
-    storageAdd(table, data, callback) {
-        try {
-            console.log('Steam Design Tools: will add storage', data);
-            chrome.storage.local.get([table], result => {
-                // 现有数据缓存 
-                let cache = [];
-                // 新的待存储对象
-                let storageData = {};
-                // 当前表已存在则获取其浅拷贝增量增加并判断重复
-                if (typeof result[table] !== 'undefined') {
-                    cache = result[table].slice();
-                    // 如果当前 data 一存在则 return
-                    for (const key in cache) {
-                        if (cache.hasOwnProperty(key)) {
-                            // 经过测试 Steam 背景图物品 name 有相同情况
-                            if (cache[key].marketUrl === data.marketUrl) {
-                                new SteamNotifications('\u274C ' + cache[key].name + ' 已存在');
-                                return;
-                            };
-                        }
-                    }
-                }
-                // 当前表不存在直接增加新数据
-                cache.push(data);
-                storageData[table] = cache;
-                // 把修改完缓存数据写入存储
-                chrome.storage.local.set(storageData, () => {
-                    // 执行回调函数 并把存储数据作为参数返回
-                    callback(storageData[table]);
-                });
-            });
-        } catch (error) {
-            console.log('Steam Design Tools: add storage error', error);
-            new SteamNotifications('\u274C 操作失败，请刷新页面再次尝试。');
-        }
-    },
+    static storageInsert (itemName, insertData, key) {
+        ChromeStorage.insertInto(itemName, insertData, key).then((data) => {
+            if (!data.success) {
+                console.log('Steam Design Tools: storage insert error', data.result);
+                new SteamNotifications('\u274C 操作失败，请刷新页面再次尝试。');
+                return;
+            }
+            if (data.isExist) {
+                new SteamNotifications('\u274C ' + insertData.name + ' 已存在');
+            } else {
+                // Set Badge
+                this.sendBadgeMsg(data.result.length);
+                // Notifications result
+                new SteamNotifications('\u2714\uFE0F ' + insertData.name + ' 成功添加');
+            }
+        })
+    }
     /**
      * sendBadgeMsg
      * Send message to background.js to update Badge on Chrome
      * 向 background.js 发送 Chrome 右上角扩展 ICON 数量更新消息
      * @param {number} num Badge 显示数量
      */
-    sendBadgeMsg(num) {
+    static sendBadgeMsg (num) {
         // 设置 badge 图标当前存储数量
         const message = {
             action: APP_CONFIG.actionType.BADGE_UPDATE,
@@ -153,7 +129,7 @@ const chromeHandle = {
         // 发送消息给 background.js
         chrome.runtime.sendMessage(message, response => {});
     }
-};
+}
 
 /**
  * inventoryTools
@@ -211,14 +187,7 @@ const inventoryTools = {
             };
 
             // 写入 chrome.storage
-            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
-                if (typeof data !== 'undefined' && data.length > 0) {
-                    // Set Badge
-                    chromeHandle.sendBadgeMsg(data.length);
-                    // Notifications result
-                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
-                }
-            });
+            ChromeBridge.storageInsert(APP_CONFIG.TABLE_NAME, backgroundData, 'marketUrl');
         });
     },
     /**
@@ -371,15 +340,8 @@ const marketTools = {
                 isLike: false
             };
 
-            // Save data into chrome storage
-            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
-                if (typeof data !== 'undefined' && data.length > 0) {
-                    // Set Badge
-                    chromeHandle.sendBadgeMsg(data.length);
-                    // Notifications result
-                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
-                }
-            });
+            // 写入 chrome.storage
+            ChromeBridge.storageInsert(APP_CONFIG.TABLE_NAME, backgroundData, 'marketUrl');
         });
     }
 };
@@ -419,7 +381,6 @@ const summerSale = {
         // addButton 暂存预览功能触发
         $('.sdt-add-button').live('click', function (event) {
             event.preventDefault();
-            // event.stopPropagation();
 
             // 当前 Steam 物品项
             const curlistItem = $(this).parents(listItemClass);
@@ -438,18 +399,9 @@ const summerSale = {
                 isLike: false
             };
 
-            // Save data into chrome storage
-            chromeHandle.storageAdd(APP_CONFIG.TABLE_NAME, backgroundData, (data) => {
-                if (typeof data !== 'undefined' && data.length > 0) {
-                    // Set Badge
-                    chromeHandle.sendBadgeMsg(data.length);
-                    // Notifications result
-                    new SteamNotifications('\u2714\uFE0F ' + backgroundData.name + ' 成功添加');
-                }
-            });
-            
+            // 写入 chrome.storage
+            ChromeBridge.storageInsert(APP_CONFIG.TABLE_NAME, backgroundData, 'marketUrl');
         });
-
     }
 };
 

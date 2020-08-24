@@ -16,6 +16,10 @@ module.exports = function override(config, env) {
                     to: "chrome-assets/content-scripts",
                 },
                 {
+                    from: "src/utils",
+                    to: "chrome-assets/content-scripts",
+                },
+                {
                     from: "src/config/config.js",
                     to: "chrome-assets/content-scripts",
                 },

@@ -25,6 +25,7 @@
 			"js": [
 				"chrome-assets/lib/jquery.js",
 				"chrome-assets/content-scripts/config.js",
+				"chrome-assets/content-scripts/chromeAPI.js",
 				"chrome-assets/content-scripts/index.js"
 			],
 			"run_at": "document_start"

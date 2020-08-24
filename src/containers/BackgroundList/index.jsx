@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import ReactDragListView from 'react-drag-listview';
 import APP_CONFIG from '../../config/config';
+import ChromeStorage from '../../utils/chromeAPI';
 import Item from './item';
 import './index.scss';
 import mockData from '../../mock/backgroundData.json';
@@ -18,9 +19,9 @@ export default class BackgroundList extends Component {
         // ENV development 无法运行 Chrome API
         if (process.env.NODE_ENV === 'production') {
             // ENV production get data from Chrome storage
-            chrome.storage.local.get([APP_CONFIG.TABLE_NAME], result => {
-                let resultData = result[APP_CONFIG.TABLE_NAME] ? result[APP_CONFIG.TABLE_NAME] : [];
-                this.setState({ backgorundList: resultData });
+            ChromeStorage.get(APP_CONFIG.TABLE_NAME).then((data) => {
+                const resultData = data[APP_CONFIG.TABLE_NAME] ? data[APP_CONFIG.TABLE_NAME] : [];
+                this.setState({ backgorundList: resultData })
             });
         } else {
             // ENV development use mock data
@@ -64,11 +65,11 @@ export default class BackgroundList extends Component {
      */
     updateChromeStorage = (data) => {
         if (process.env.NODE_ENV === 'production') {
-            let cache = {};
-            cache[APP_CONFIG.TABLE_NAME] = data;
-            chrome.storage.local.set(cache, () => {
-                console.log('Storage saved');
-            });
+            ChromeStorage.set({[APP_CONFIG.TABLE_NAME]: data}).then((data) => {
+                if (data.success) {
+                    console.log('Storage saved');
+                }
+            })
         }
     }
 
@@ -145,8 +146,6 @@ export default class BackgroundList extends Component {
         this.setState({ backgorundList: [] });
         this.updateChromeStorage([]);
     }
-
-    
 
     render() {
         const _this = this;
