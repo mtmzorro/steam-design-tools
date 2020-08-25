@@ -4,11 +4,11 @@
  * Chrome 扩展以及 React 项目中存储、消息等配置
  */
 const APP_CONFIG = {
-    // Chrome local storage table name
-    TABLE_NAME: 'background_data',
+    // Chrome local storage item name
+    itemName: 'background_data',
     // Data structure
     // @returns {object} 
-    getTableStructure() {
+    getDataStructure() {
         return {
             // background item name
             name: '',

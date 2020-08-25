@@ -55,6 +55,7 @@ yarn install
 # Start project 
 yarn start
 
-# Build Chrome Extension 
+# Build Chrome Extension
+# Will create a Zip file in /pubulish
 yarn build
 ```

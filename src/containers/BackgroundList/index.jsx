@@ -19,8 +19,8 @@ export default class BackgroundList extends Component {
         // ENV development 无法运行 Chrome API
         if (process.env.NODE_ENV === 'production') {
             // ENV production get data from Chrome storage
-            ChromeStorage.get(APP_CONFIG.TABLE_NAME).then((data) => {
-                const resultData = data.result[APP_CONFIG.TABLE_NAME] ? data.result[APP_CONFIG.TABLE_NAME] : [];
+            ChromeStorage.get(APP_CONFIG.itemName).then((data) => {
+                const resultData = data.result[APP_CONFIG.itemName] ? data.result[APP_CONFIG.itemName] : [];
                 this.setState({ backgorundList: resultData })
             });
         } else {
@@ -65,7 +65,7 @@ export default class BackgroundList extends Component {
      */
     updateChromeStorage = (data) => {
         if (process.env.NODE_ENV === 'production') {
-            ChromeStorage.set(APP_CONFIG.TABLE_NAME, data).then((data) => {
+            ChromeStorage.set(APP_CONFIG.itemName, data).then((data) => {
                 if (data.success) {
                     console.log('Storage saved');
                 }
@@ -201,8 +201,8 @@ export default class BackgroundList extends Component {
                 <>
                     {backgorundList && backgorundList.length > 0 ? (
                         <div className="bl-operate">
-                            <span className="button button-clearUnLike" onClick={() => { this.clearUnLikeItem(); }}>清空未标星</span>
-                            <span className="button button-clearall" onClick={() => { this.clearAllItem(); }}>清空全部</span>
+                            <span className="button button-clearUnLike" onClick={this.clearUnLikeItem}>清空未标星</span>
+                            <span className="button button-clearall" onClick={this.clearAllItem}>清空全部</span>
                         </div>
                     ) : (
                         <div className="bl-operate">

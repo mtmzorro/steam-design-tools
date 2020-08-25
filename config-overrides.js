@@ -80,10 +80,6 @@ module.exports = function override(config, env) {
             ),
             new CopyPlugin([
                 {
-                    from: "src/content-scripts/sdt.css",
-                    to: "chrome-assets/content-scripts",
-                },
-                {
                     from: "src/content-scripts/background.js",
                     to: "chrome-assets/content-scripts",
                 }

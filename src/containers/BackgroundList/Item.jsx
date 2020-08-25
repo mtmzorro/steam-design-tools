@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
 
 export default class BackgroundItem extends Component {
+
+    handleOnLike = () => {
+        const {onLike, item} = this.props;
+        onLike(item.marketUrl);
+    }
+
+    handleOnRemove = () => {
+        const {onRemove, item} = this.props;
+        onRemove(item.marketUrl);
+    }
+
+    handleSetBackgound = () => {
+        const {setBackgound, item} = this.props;
+        setBackgound(item.backgroundUrl);
+    }
  
     render() {
-        const {
-            item,
-            onLike,
-            onRemove,
-            setBackgound,
-        } = this.props;
+        const { item } = this.props;
         
         return (
             <li className="background-item">
@@ -29,13 +39,13 @@ export default class BackgroundItem extends Component {
                     <span className="bi-n-price">{item.marketPrice}</span>
                 </div>
                 <div className="bi-operate">
-                    <span className="bi-o-button" onClick={() => { onLike(item.marketUrl) }}>
+                    <span className="bi-o-button" onClick={this.handleOnLike}>
                         <span className={item.isLike ? 'iconfont icon-star stared' : 'iconfont icon-star'}></span>
                     </span>
-                    <span className="bi-o-button" onClick={() => { onRemove(item.marketUrl) }}>
+                    <span className="bi-o-button" onClick={this.handleOnRemove}>
                         <span className="iconfont icon-remove"></span>
                     </span>
-                    <span className="bi-o-button" onClick={() => { setBackgound(item.backgroundUrl) }}>
+                    <span className="bi-o-button" onClick={this.handleSetBackgound}>
                         <span className="iconfont icon-brush"></span><em>设为背景</em>
                     </span>
                 </div>
