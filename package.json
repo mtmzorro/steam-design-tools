@@ -14,8 +14,9 @@
     },
     "scripts": {
         "zip": "node ./config-zip.js",
+        "lint": "eslint --ext .js src/ --max-warnings 10",
         "start": "react-app-rewired start",
-        "build": "react-app-rewired build",
+        "build": "yarn lint && react-app-rewired build",
         "postbuild": "yarn zip",
         "test": "react-scripts test",
         "eject": "react-app-rewired eject"

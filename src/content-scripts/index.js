@@ -7,6 +7,10 @@ import {
     SteamNotificationError,
 } from '../utils/steam';
 
+/**
+ * ChromeBridge
+ * Chrome 扩展 相关数据、消息方法封装
+ */
 class ChromeBridge {
     /**
      * storageInsert 
@@ -69,17 +73,22 @@ const inventoryTools = {
             // 侧边栏容器
             const inventorySidebar = $(this).parents('.inventory_iteminfo');
             const buttonArea = inventorySidebar.find('.item_actions');
-            // 定义暂存背景图项目按钮
-            const buttonHtml = `<a class="btn_small btn_grey_white_innerfade btn_std" href="javascript:;">
-                                    <span>Steam Design Tools 预览</span>
-                                </a>`;
-            const button = $(buttonHtml);
-            button.attr('data-url', $(this).attr('src'));
-
-            // reset 跳转button状态
-            inventorySidebar.find('.btn_std').remove();
-            // 仅在背景图类上提供触发按钮
-            if (buttonArea.is(':visible')) {
+            const buttonLink = buttonArea.find('a').first();
+            // 判断是否为 背景图项目
+            // /public\/images\/items/ 排除优惠券项目
+            if (
+                buttonLink.length > 0 &&
+                /public\/images\/items/.test(buttonLink.attr('href'))
+            ) {
+                // 定义暂存背景图项目按钮
+                const buttonHtml = `<a class="btn_small btn_grey_white_innerfade btn_std" href="javascript:;">
+                                        <span>Steam Design Tools 预览</span>
+                                    </a>`;
+                const button = $(buttonHtml);
+                button.attr('data-url', $(this).attr('src'));
+        
+                // reset 跳转button状态
+                inventorySidebar.find('.btn_std').remove();
                 button.appendTo(buttonArea);
             }
         });
