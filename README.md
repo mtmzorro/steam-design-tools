@@ -1,4 +1,10 @@
 # Steam Design Tools
+
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/mtmzorro/steam-design-tools)
+![Chrome Web Store](https://img.shields.io/chrome-web-store/v/ipndeiedddcbjjlfbinflapdlommhalf)
+![GitHub All Releases](https://img.shields.io/github/downloads/mtmzorro/steam-design-tools/total)
+![GitHub](https://img.shields.io/github/license/mtmzorro/steam-design-tools)
+
 > 一个 Steam 个人资料页背景图和展柜设计增强 Chrome 扩展工具<br/>
 > *「市场里面花钱买个背景图竟然不能预览，只能看图想象，不能忍」*
 
@@ -10,6 +16,10 @@
 * [Releases](https://github.com/mtmzorro/steam-design-tools/releases) ~~`.crx` 文件下载，然后在 Chrome 中打开 chrome://extensions/ 将 `.crx` 文件托进去即可安装~~ Chrome 最新版本已经阻止`.crx`直接运行，请下载`.zip`文件包，解压后进入`chrome://extensions/`点击「加载已解压的扩展程序」按钮。
 
 ## 更新日志
+### 1.1.2
+* Bug Fix 修复个人库存中，优惠券物品被识别为背景图
+* Optimize 优化 Chrome API、Steam 相关代码
+
 ### 1.1.1
 * Bug Fix 修复编辑个人资料页相关设置时，profile/edit 仍然初始化个人资料页展柜等增强工具
 
